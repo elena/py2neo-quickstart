@@ -64,6 +64,8 @@ There are plenty of options for connecting to your database if this implementati
 Step 2: Create ``Node`` and ``Relationship`` Subgraphs
 ------------------------------------------------------
 
+Full ``Node`` and ``Relationship`` reference: https://py2neo.org/v4/data.html
+
 .. code-block:: python
 
     from py2neo import Node, Relationship
@@ -99,11 +101,9 @@ Step 2: Create ``Node`` and ``Relationship`` Subgraphs
     EmilTheMatrix = Relationship(Emil, "ACTED_IN", TheMatrix)
     EmilTheMatrix['roles'] = ['Emil']
 
-Note: This looks great but **YOUR DB OBJECTS DO NOT EXIST YET!**.
+Note: This looks great but **YOUR DB OBJECTS DO NOT EXIST YET!**
 
 They need to committed to the database per the next step.
-
-Full ``Node`` and ``Relationship`` reference: https://py2neo.org/v4/data.html
 
 
 Step 3: Commit
@@ -231,14 +231,7 @@ Note: watch the prefix **`"_."`** in the ``where`` statement.
     [(_9:Movie {released: 1997, tagline: 'Evil has its winning ways', title: "The Devil's Advocate"}),
      (_13:Movie {released: 1992, tagline: "In the heart of the nation's capital, in a courthouse of the U.S. government, one man will stop at nothing to keep his honor, and one will stop at nothing to find the truth.", title: 'A Few Good Men'}),
      (_50:Movie {released: 1997, tagline: 'A comedy from the heart that goes for the throat.', title: 'As Good as It Gets'}),
-     (_54:Movie {released: 1998, tagline: 'After life there is more. The end is just the beginning.', title: 'What Dreams May Come'}),
-     (_60:Movie {released: 1999, tagline: 'First loves last. Forever.', title: 'Snow Falling on Cedars'}),
-     (_65:Movie {released: 1998, tagline: 'At odds in life... in love on-line.', title: "You've Got Mail"}),
-     (_71:Movie {released: 1993, tagline: 'What if someone you never met, someone you never saw, someone you never knew was the only someone for you?', title: 'Sleepless in Seattle'}),
-     (_76:Movie {released: 1990, tagline: 'A story of love, lava and burning desire.', title: 'Joe Versus the Volcano'}),
-     (_78:Movie {released: 1999, tagline: 'Welcome to the Real World', title: 'The Matrix'}),
-     (_81:Movie {released: 1998, tagline: 'At odds in life... in love on-line.', title: 'When Harry Met Sally'}),
-     (_85:Movie {released: 1996, tagline: 'In every life there comes a time when that thing you dream becomes that thing you do', title: 'That Thing You Do'}),
+     ...
      (_95:Movie {released: 1996, tagline: 'Come as you are', title: 'The Birdcage'}),
      (_97:Movie {released: 1992, tagline: "It's a hell of a thing, killing a man", title: 'Unforgiven'}),
      (_100:Movie {released: 1995, tagline: 'The hottest data on earth. In the coolest head in town', title: 'Johnny Mnemonic'}),
@@ -255,9 +248,9 @@ See full reference here: https://py2neo.org/v4/matching.html
 Query
 +++++
 
-First thing we need to connect to the database:
-
 See reference here: https://py2neo.org/v4/matching.html
+
+``RelationshipMatcher`` needs to be imported and instantiated:
 
 .. code-block:: python
 
@@ -286,13 +279,10 @@ See reference here: https://py2neo.org/v4/matching.html
     (Tom Hanks)-[:ACTED_IN {roles: ['Rep. Charlie Wilson']}]->(_169),
     (Tom Hanks)-[:ACTED_IN {roles: ['Hero Boy', 'Father', 'Conductor', 'Hobo', 'Scrooge', 'Santa Claus']}]->(_180),
     (Tom Hanks)-[:ACTED_IN {roles: ['Chuck Noland']}]->(_160),
-    (Tom Hanks)-[:ACTED_IN {roles: ['Jim Lovell']}]->(_154),
-    (Tom Hanks)-[:ACTED_IN {roles: ['Paul Edgecomb']}]->(_140),
-    (Tom Hanks)-[:ACTED_IN {roles: ['Dr. Robert Langdon']}]->(_121),
+    ...
     (Tom Hanks)-[:ACTED_IN {roles: ['Zachry', 'Dr. Henry Goose', 'Isaac Sachs', 'Dermot Hoggins']}]->(_105),
     (Tom Hanks)-[:ACTED_IN {roles: ['Mr. White']}]->(_85),
     (Tom Hanks)-[:ACTED_IN {roles: ['Joe Banks']}]->(_76),
-    (Tom Hanks)-[:ACTED_IN {roles: ['Sam Baldwin']}]->(_71),
     (Tom Hanks)-[:ACTED_IN {roles: ['Joe Fox']}]->(_65)]
 
 
@@ -311,10 +301,10 @@ This is possible, but getting out of the scope of ``py2neo``, the following are 
 .. code-block:: python
 
     >>> results = graph.run('MATCH (cloudAtlas {title: "Cloud Atlas"})<-[:DIRECTED]-(directors) RETURN directors.name')
-    >>> print(list(results))
-    [<Record directors.name='Tom Tykwer'>,
-     <Record directors.name='Lilly Wachowski'>,
-     <Record directors.name='Lana Wachowski'>]
+    >>> results.data()
+    [{'directors.name': 'Tom Tykwer'},
+     {'directors.name': 'Lilly Wachowski'},
+     {'directors.name': 'Lana Wachowski'}]
 
 The following will produce the same result, although is less elegant:
 
@@ -344,46 +334,20 @@ The following will produce the same result, although is less elegant:
 .. code-block:: python
 
     >>> results = graph.run('MATCH (tom:Person {name:"Tom Hanks"})-[:ACTED_IN]->(m)<-[:ACTED_IN]-(coActors) RETURN coActors.name')
-    >>> print(list(results))
-    [<Record coActors.name='Bill Paxton'>,
-     <Record coActors.name='Madonna'>,
-     <Record coActors.name='Geena Davis'>,
-     <Record coActors.name="Rosie O'Donnell">,
-     <Record coActors.name='Lori Petty'>,
-     <Record coActors.name='Philip Seymour Hoffman'>,
-     <Record coActors.name='Julia Roberts'>,
-     <Record coActors.name='Helen Hunt'>,
-     <Record coActors.name='Bill Paxton'>,
-     <Record coActors.name='Gary Sinise'>,
-     <Record coActors.name='Ed Harris'>,
-     <Record coActors.name='Kevin Bacon'>,
-     <Record coActors.name='Patricia Clarkson'>,
-     <Record coActors.name='Michael Clarke Duncan'>,
-     <Record coActors.name='David Morse'>,
-     <Record coActors.name='Sam Rockwell'>,
-     <Record coActors.name='Gary Sinise'>,
-     <Record coActors.name='Bonnie Hunt'>,
-     <Record coActors.name='James Cromwell'>,
-     <Record coActors.name='Ian McKellen'>,
-     <Record coActors.name='Audrey Tautou'>,
-     <Record coActors.name='Paul Bettany'>,
-     <Record coActors.name='Jim Broadbent'>,
-     <Record coActors.name='Hugo Weaving'>,
-     <Record coActors.name='Halle Berry'>,
-     <Record coActors.name='Liv Tyler'>,
-     <Record coActors.name='Charlize Theron'>,
-     <Record coActors.name='Meg Ryan'>,
-     <Record coActors.name='Nathan Lane'>,
-     <Record coActors.name='Victor Garber'>,
-     <Record coActors.name="Rosie O'Donnell">,
-     <Record coActors.name='Rita Wilson'>,
-     <Record coActors.name='Bill Pullman'>,
-     <Record coActors.name='Meg Ryan'>,
-     <Record coActors.name='Steve Zahn'>,
-     <Record coActors.name='Parker Posey'>,
-     <Record coActors.name='Dave Chappelle'>,
-     <Record coActors.name='Greg Kinnear'>,
-     <Record coActors.name='Meg Ryan'>]
+    >>> results.data()
+     [{'coActors.name': 'Bill Paxton'},
+      {'coActors.name': 'Madonna'},
+      {'coActors.name': 'Geena Davis'},
+      {'coActors.name': "Rosie O'Donnell"},
+      {'coActors.name': 'Lori Petty'},
+      {'coActors.name': 'Philip Seymour Hoffman'},
+      ...
+      {'coActors.name': 'Meg Ryan'},
+      {'coActors.name': 'Steve Zahn'},
+      {'coActors.name': 'Parker Posey'},
+      {'coActors.name': 'Dave Chappelle'},
+      {'coActors.name': 'Greg Kinnear'},
+      {'coActors.name': 'Meg Ryan'}]
 
 
 **How people are related to "Cloud Atlas"...**
@@ -399,14 +363,15 @@ The following will produce the same result, although is less elegant:
 .. code-block:: python
 
    >>> results = graph.run('MATCH (people:Person)-[relatedTo]-(:Movie {title: "Cloud Atlas"}) RETURN people.name, Type(relatedTo), relatedTo')
-   >>> print(list(results))
+   >>> results.data()
    [<Record people.name='Jessica Thompson' Type(relatedTo)='REVIEWED' relatedTo=(Jessica Thompson)-[:REVIEWED {rating: 95, summary: 'An amazing journey'}]->(_105)>,
-   <Record people.name='Stefan Arndt' Type(relatedTo)='PRODUCED' relatedTo=(Stefan Arndt)-[:PRODUCED {}]->(_105)>,
-   <Record people.name='Tom Tykwer' Type(relatedTo)='DIRECTED' relatedTo=(Tom Tykwer)-[:DIRECTED {}]->(_105)>,
-   <Record people.name='Lilly Wachowski' Type(relatedTo)='DIRECTED' relatedTo=(Lilly Wachowski)-[:DIRECTED {}]->(_105)>,
-   <Record people.name='Lana Wachowski' Type(relatedTo)='DIRECTED' relatedTo=(Lana Wachowski)-[:DIRECTED {}]->(_105)>,
-   <Record people.name='David Mitchell' Type(relatedTo)='WROTE' relatedTo=(David Mitchell)-[:WROTE {}]->(_105)>,
-   <Record people.name='Jim Broadbent' Type(relatedTo)='ACTED_IN' relatedTo=(Jim Broadbent)-[:ACTED_IN {roles: ['Vyvyan Ayrs', 'Captain Molyneux', 'Timothy Cavendish']}]->(_105)>,
-   <Record people.name='Hugo Weaving' Type(relatedTo)='ACTED_IN' relatedTo=(Hugo Weaving)-[:ACTED_IN {roles: ['Bill Smoke', 'Haskell Moore', 'Tadeusz Kesselring', 'Nurse Noakes', 'Boardman Mephi', 'Old Georgie']}]->(_105)>,
-   <Record people.name='Halle Berry' Type(relatedTo)='ACTED_IN' relatedTo=(Halle Berry)-[:ACTED_IN {roles: ['Luisa Rey', 'Jocasta Ayrs', 'Ovid', 'Meronym']}]->(_105)>,
-   <Record people.name='Tom Hanks' Type(relatedTo)='ACTED_IN' relatedTo=(Tom Hanks)-[:ACTED_IN {roles: ['Zachry', 'Dr. Henry Goose', 'Isaac Sachs', 'Dermot Hoggins']}]->(_105)>]
+    <Record people.name='Stefan Arndt' Type(relatedTo)='PRODUCED' relatedTo=(Stefan Arndt)-[:PRODUCED {}]->(_105)>,
+    <Record people.name='Tom Tykwer' Type(relatedTo)='DIRECTED' relatedTo=(Tom Tykwer)-[:DIRECTED {}]->(_105)>,
+    <Record people.name='Lilly Wachowski' Type(relatedTo)='DIRECTED' relatedTo=(Lilly Wachowski)-[:DIRECTED {}]->(_105)>,
+    <Record people.name='Lana Wachowski' Type(relatedTo)='DIRECTED' relatedTo=(Lana Wachowski)-[:DIRECTED {}]->(_105)>,
+    <Record people.name='David Mitchell' Type(relatedTo)='WROTE' relatedTo=(David Mitchell)-[:WROTE {}]->(_105)>,
+    <Record people.name='Jim Broadbent' Type(relatedTo)='ACTED_IN' relatedTo=(Jim Broadbent)-[:ACTED_IN {roles: ['Vyvyan Ayrs', 'Captain Molyneux', 'Timothy Cavendish']}]->(_105)>,
+    <Record people.name='Hugo Weaving' Type(relatedTo)='ACTED_IN' relatedTo=(Hugo Weaving)-[:ACTED_IN {roles: ['Bill Smoke', 'Haskell Moore', 'Tadeusz Kesselring', 'Nurse Noakes', 'Boardman Mephi', 'Old Georgie']}]->(_105)>,
+    <Record people.name='Halle Berry' Type(relatedTo)='ACTED_IN' relatedTo=(Halle Berry)-[:ACTED_IN {roles: ['Luisa Rey', 'Jocasta Ayrs', 'Ovid', 'Meronym']}]->(_105)>,
+    <Record people.name='Tom Hanks' Type(relatedTo)='ACTED_IN' relatedTo=(Tom Hanks)-[:ACTED_IN {roles: ['Zachry', 'Dr. Henry Goose', 'Isaac Sachs', 'Dermot Hoggins']}]->(_105)>]
+
