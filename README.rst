@@ -4,14 +4,19 @@
 
 Hopefully by this stage you have a little familiarity with both `python` and `neo4j`//`cypher`.
 
-If you're familiar with the example provided by default when you select **"Jump into code: Movie Graph"**, also provided at: https://neo4j.com/developer/example-project/
+If you're familiar with the example provided by default when you select **"Jump into code: Movie Graph"**.
 
+This is a smaller and similar dataset to the one provided here:
+https://neo4j.com/developer/movie-database/
 
 Let's replicate
 
 ``:play movie-graph``
 
-Here's the `cypher` from this tutorial:
+Create
+++++++
+
+Here's the ``cypher`` from this tutorial:
 
 .. code-block:: cypher
 
@@ -34,17 +39,17 @@ Here's the `cypher` from this tutorial:
       (LanaW)-[:DIRECTED]->(TheMatrix),
       (JoelS)-[:PRODUCED]->(TheMatrix)
 
-This is the same in `py2neo`. There are 3 steps.
+This is the same in ``py2neo``. There are 3 steps.
 
 # Step 1: Connect to your GraphDB
 
-# Step 2: Create your `Node` and `Relationship` objects
+# Step 2: Create your ``Node`` and ``Relationship`` objects
 
-# Step 3: Commit your subgraphs ()
+# Step 3: Commit your Subgraphs (https://py2neo.org/v4/data.html#subgraph-objects)
 
 
-Step 1:
--------
+Step 1: Connect
+---------------
 
 .. code-block:: python
 
@@ -53,18 +58,15 @@ Step 1:
     graph = Graph(password='[yoursekretpasswordhere]')
 
 
-See further details about `graph`: https://py2neo.org/v4/database.html#py2neo.database.Graph
+There are plenty of options for connecting to your database if this implementation doesn't work for you. See the reference here: https://py2neo.org/v4/database.html#py2neo.database.Graph
 
 
-Step 2:
--------
-
-`Node` and `Relationship` reference: https://py2neo.org/v4/data.html
+Step 2: Create ``Node`` and ``Relationship`` Subgraphs
+------------------------------------------------------
 
 .. code-block:: python
 
     from py2neo import Node, Relationship
-
 
     # Movie
     TheMatrix = Node("Movie", title='The Matrix', released=1999,
@@ -97,11 +99,15 @@ Step 2:
     EmilTheMatrix = Relationship(Emil, "ACTED_IN", TheMatrix)
     EmilTheMatrix['roles'] = ['Emil']
 
-Note: This looks great but **YOUR DB OBJECTS DO NOT EXIST YET!**. You need to commit them to the database.
+Note: This looks great but **YOUR DB OBJECTS DO NOT EXIST YET!**.
+
+They need to committed to the database per the next step.
+
+Full ``Node`` and ``Relationship`` reference: https://py2neo.org/v4/data.html
 
 
-Step 3:
--------
+Step 3: Commit
+--------------
 
 .. code-block:: python
 
@@ -129,3 +135,119 @@ Step 3:
 
 
 The gist of the full dataset can be found here: https://gist.github.com/elena/733275bd55fba0a48cd885fe0427e5d4
+
+
+Find
+++++
+
+First thing we need to connect to the database:
+
+See reference here: https://py2neo.org/v4/matching.html
+
+.. code-block:: python
+
+    from py2neo import Graph, NodeMatcher
+    graph = Graph(password='[yoursekretpasswordhere]')
+    matcher = NodeMatcher(graph)
+
+
+**Find the actor named "Tom Hanks"...**
+
+`cypher`:
+
+.. code-block:: cypher
+
+    MATCH (tom {name: "Tom Hanks"}) RETURN tom
+
+`python`:
+
+.. code-block:: python
+
+    >>> tom = matcher.match(name="Tom Hanks").first()
+    >>> print(tom)
+    (_69:Person {born: 1956, name: 'Tom Hanks'})
+
+
+**Find the movie with title "Cloud Atlas"...**
+
+`cypher`:
+
+.. code-block:: cypher
+
+    MATCH (cloudAtlas {title: "Cloud Atlas"}) RETURN cloudAtlas
+
+`python`:
+
+.. code-block:: python
+
+    >>> cloudAtlas = matcher.match(title="Cloud Atlas").first()
+    >>> print(cloudAtlas)
+    (_105:Movie {released: 2012, tagline: 'Everything is connected', title: 'Cloud Atlas'})
+
+
+**Find 10 people...**
+
+`cypher`:
+
+.. code-block:: cypher
+
+    MATCH (people:Person) RETURN people.name LIMIT 10
+
+`python`:
+
+.. code-block:: python
+
+    >>> people = matcher.match("Person").limit(10)
+    >>> print(people)
+    <py2neo.matching.NodeMatch object at 0x7fc00046ac18>
+    >>> print(list(people))
+    [(_0:Person {born: 1967, name: 'Carrie-Anne Moss'}),
+     (_1:Person {born: 1961, name: 'Laurence Fishburne'}),
+     (_2:Person {born: 1960, name: 'Hugo Weaving'}),
+     (_3:Person {born: 1967, name: 'Lilly Wachowski'}),
+     (_4:Person {born: 1965, name: 'Lana Wachowski'}),
+     (_5:Person {born: 1952, name: 'Joel Silver'}),
+     (_6:Person {born: 1978, name: 'Emil Eifrem'}),
+     (_10:Person {born: 1975, name: 'Charlize Theron'}),
+     (_11:Person {born: 1940, name: 'Al Pacino'}),
+     (_12:Person {born: 1944, name: 'Taylor Hackford'})]
+
+
+**Find movies released in the 1990s...**
+
+`cypher`:
+
+.. code-block:: cypher
+
+    MATCH (nineties:Movie) WHERE nineties.released >= 1990 AND nineties.released < 2000 RETURN nineties.title
+
+`python`:
+
+Note: watch the prefix **`"_."`** in the ``where`` statement.
+
+.. code-block:: python
+
+    >>> nineties = matcher.match("Movie").where('_.released >= 1990', '_.released < 2000')
+    >>> print(list(nineties))
+    [(_9:Movie {released: 1997, tagline: 'Evil has its winning ways', title: "The Devil's Advocate"}),
+     (_13:Movie {released: 1992, tagline: "In the heart of the nation's capital, in a courthouse of the U.S. government, one man will stop at nothing to keep his honor, and one will stop at nothing to find the truth.", title: 'A Few Good Men'}),
+     (_50:Movie {released: 1997, tagline: 'A comedy from the heart that goes for the throat.', title: 'As Good as It Gets'}),
+     (_54:Movie {released: 1998, tagline: 'After life there is more. The end is just the beginning.', title: 'What Dreams May Come'}),
+     (_60:Movie {released: 1999, tagline: 'First loves last. Forever.', title: 'Snow Falling on Cedars'}),
+     (_65:Movie {released: 1998, tagline: 'At odds in life... in love on-line.', title: "You've Got Mail"}),
+     (_71:Movie {released: 1993, tagline: 'What if someone you never met, someone you never saw, someone you never knew was the only someone for you?', title: 'Sleepless in Seattle'}),
+     (_76:Movie {released: 1990, tagline: 'A story of love, lava and burning desire.', title: 'Joe Versus the Volcano'}),
+     (_78:Movie {released: 1999, tagline: 'Welcome to the Real World', title: 'The Matrix'}),
+     (_81:Movie {released: 1998, tagline: 'At odds in life... in love on-line.', title: 'When Harry Met Sally'}),
+     (_85:Movie {released: 1996, tagline: 'In every life there comes a time when that thing you dream becomes that thing you do', title: 'That Thing You Do'}),
+     (_95:Movie {released: 1996, tagline: 'Come as you are', title: 'The Birdcage'}),
+     (_97:Movie {released: 1992, tagline: "It's a hell of a thing, killing a man", title: 'Unforgiven'}),
+     (_100:Movie {released: 1995, tagline: 'The hottest data on earth. In the coolest head in town', title: 'Johnny Mnemonic'}),
+     (_140:Movie {released: 1999, tagline: "Walk a mile you'll never forget.", title: 'The Green Mile'}),
+     (_151:Movie {released: 1992, tagline: "He didn't want law. He wanted justice.", title: 'Hoffa'}),
+     (_154:Movie {released: 1995, tagline: 'Houston, we have a problem.', title: 'Apollo 13'}),
+     (_157:Movie {released: 1996, tagline: "Don't Breathe. Don't Look Back.", title: 'Twister'}),
+     (_167:Movie {released: 1999, tagline: "One robot's 200 year journey to become an ordinary man.", title: 'Bicentennial Man'}),
+     (_181:Movie {released: 1992, tagline: 'Once in a lifetime you get a chance to do something different.', title: 'A League of Their Own'})]
+
+See full reference here: https://py2neo.org/v4/matching.html
