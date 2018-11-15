@@ -2,7 +2,19 @@
 ``import py2neo`` -- Quickstart
 *******************************
 
-Hopefully by this stage you have a little familiarity with both `python` and `neo4j`//`cypher`.
+As everyone knows:
+
+``python`` == best
+
+``neo4j`` == amazing
+
+.. image:: both.gif
+
+``python`` + ``neo4j`` = ``Py2Neo`` <3
+
+We are so grateful to https://github.com/technige for combining them as https://github.com/technige/py2neo.
+
+Hopefully by this stage you have a little familiarity with both ``python`` and ``neo4j``\/``cypher``.
 
 If you're familiar with the example provided by default when you select **"Jump into code: Movie Graph"**.
 
@@ -140,6 +152,8 @@ The gist of the full dataset can be found here: https://gist.github.com/elena/73
 Find
 ++++
 
+Example queries for finding individual nodes.
+
 First thing we need to connect to the database:
 
 See reference here: https://py2neo.org/v4/matching.html
@@ -152,13 +166,13 @@ See reference here: https://py2neo.org/v4/matching.html
 
 **Find the actor named "Tom Hanks"...**
 
-`cypher`:
+``cypher``:
 
 .. code-block:: cypher
 
     MATCH (tom {name: "Tom Hanks"}) RETURN tom
 
-`python`:
+``python``:
 
 .. code-block:: python
 
@@ -169,13 +183,13 @@ See reference here: https://py2neo.org/v4/matching.html
 
 **Find the movie with title "Cloud Atlas"...**
 
-`cypher`:
+``cypher``:
 
 .. code-block:: cypher
 
     MATCH (cloudAtlas {title: "Cloud Atlas"}) RETURN cloudAtlas
 
-`python`:
+``python``:
 
 .. code-block:: python
 
@@ -186,13 +200,13 @@ See reference here: https://py2neo.org/v4/matching.html
 
 **Find 10 people...**
 
-`cypher`:
+``cypher``:
 
 .. code-block:: cypher
 
     MATCH (people:Person) RETURN people.name LIMIT 10
 
-`python`:
+``python``:
 
 .. code-block:: python
 
@@ -214,13 +228,13 @@ See reference here: https://py2neo.org/v4/matching.html
 
 **Find movies released in the 1990s...**
 
-`cypher`:
+``cypher``:
 
 .. code-block:: cypher
 
     MATCH (nineties:Movie) WHERE nineties.released >= 1990 AND nineties.released < 2000 RETURN nineties.title
 
-`python`:
+``python``:
 
 Note: watch the prefix **`"_."`** in the ``where`` statement.
 
@@ -248,6 +262,12 @@ See full reference here: https://py2neo.org/v4/matching.html
 Query
 +++++
 
+Finding patterns within the graph.
+
+1. Actors are people who acted in movies
+2. Directors are people who directed a movie
+3. What other relationships exist?
+
 See reference here: https://py2neo.org/v4/matching.html
 
 ``RelationshipMatcher`` needs to be imported and instantiated:
@@ -261,13 +281,13 @@ See reference here: https://py2neo.org/v4/matching.html
 
 **List all Tom Hanks movies...**
 
-`cypher`:
+``cypher``:
 
 .. code-block:: cypher
 
     MATCH (tom:Person {name: "Tom Hanks"})-[:ACTED_IN]->(tomHanksMovies) RETURN tom,tomHanksMovies
 
-`python`:
+``python``:
 
 .. code-block:: python
 
@@ -288,7 +308,7 @@ See reference here: https://py2neo.org/v4/matching.html
 
 **Who directed "Cloud Atlas"?**
 
-`cypher`:
+``cypher``:
 
 .. code-block:: cypher
 
@@ -296,7 +316,7 @@ See reference here: https://py2neo.org/v4/matching.html
 
 This is possible, but getting out of the scope of ``py2neo``, the following are all cases where falling back to native cypher is probably best.
 
-`python`:
+``python``:
 
 .. code-block:: python
 
@@ -308,7 +328,7 @@ This is possible, but getting out of the scope of ``py2neo``, the following are 
 
 The following will produce the same result, although is less elegant:
 
-`python`:
+``python``:
 
 .. code-block:: python
 
@@ -323,13 +343,13 @@ The following will produce the same result, although is less elegant:
 
 **Tom Hanks' co-actors...**
 
-`cypher`:
+``cypher``:
 
 .. code-block:: cypher
 
    MATCH (tom:Person {name:"Tom Hanks"})-[:ACTED_IN]->(m)<-[:ACTED_IN]-(coActors) RETURN coActors.name
 
-`python`:
+``python``:
 
 .. code-block:: python
 
@@ -352,13 +372,13 @@ The following will produce the same result, although is less elegant:
 
 **How people are related to "Cloud Atlas"...**
 
-`cypher`:
+``cypher``:
 
 .. code-block:: cypher
 
     MATCH (people:Person)-[relatedTo]-(:Movie {title: "Cloud Atlas"}) RETURN people.name, Type(relatedTo), relatedTo
 
-`python`:
+``python``:
 
 .. code-block:: python
 
