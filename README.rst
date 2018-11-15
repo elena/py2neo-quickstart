@@ -150,7 +150,6 @@ See reference here: https://py2neo.org/v4/matching.html
     graph = Graph(password='[yoursekretpasswordhere]')
     matcher = NodeMatcher(graph)
 
-
 **Find the actor named "Tom Hanks"...**
 
 `cypher`:
@@ -251,3 +250,163 @@ Note: watch the prefix **`"_."`** in the ``where`` statement.
      (_181:Movie {released: 1992, tagline: 'Once in a lifetime you get a chance to do something different.', title: 'A League of Their Own'})]
 
 See full reference here: https://py2neo.org/v4/matching.html
+
+
+Query
++++++
+
+First thing we need to connect to the database:
+
+See reference here: https://py2neo.org/v4/matching.html
+
+.. code-block:: python
+
+    from py2neo import Graph, RelationshipMatcher
+    graph = Graph(password='[yoursekretpasswordhere]')
+    r_matcher = RelationshipMatcher(graph)
+
+
+**List all Tom Hanks movies...**
+
+`cypher`:
+
+.. code-block:: cypher
+
+    MATCH (tom:Person {name: "Tom Hanks"})-[:ACTED_IN]->(tomHanksMovies) RETURN tom,tomHanksMovies
+
+`python`:
+
+.. code-block:: python
+
+   >>> r_matcher = RelationshipMatcher(graph)
+   >>> tom = matcher.match(name="Tom Hanks").first()
+   >>> tomHanksMovies = r_matcher.match(nodes=[tom], r_type="ACTED_IN")
+   >>> print(list(tomHanksMovies))
+   [(Tom Hanks)-[:ACTED_IN {roles: ['Jimmy Dugan']}]->(_181),
+    (Tom Hanks)-[:ACTED_IN {roles: ['Rep. Charlie Wilson']}]->(_169),
+    (Tom Hanks)-[:ACTED_IN {roles: ['Hero Boy', 'Father', 'Conductor', 'Hobo', 'Scrooge', 'Santa Claus']}]->(_180),
+    (Tom Hanks)-[:ACTED_IN {roles: ['Chuck Noland']}]->(_160),
+    (Tom Hanks)-[:ACTED_IN {roles: ['Jim Lovell']}]->(_154),
+    (Tom Hanks)-[:ACTED_IN {roles: ['Paul Edgecomb']}]->(_140),
+    (Tom Hanks)-[:ACTED_IN {roles: ['Dr. Robert Langdon']}]->(_121),
+    (Tom Hanks)-[:ACTED_IN {roles: ['Zachry', 'Dr. Henry Goose', 'Isaac Sachs', 'Dermot Hoggins']}]->(_105),
+    (Tom Hanks)-[:ACTED_IN {roles: ['Mr. White']}]->(_85),
+    (Tom Hanks)-[:ACTED_IN {roles: ['Joe Banks']}]->(_76),
+    (Tom Hanks)-[:ACTED_IN {roles: ['Sam Baldwin']}]->(_71),
+    (Tom Hanks)-[:ACTED_IN {roles: ['Joe Fox']}]->(_65)]
+
+
+**Who directed "Cloud Atlas"?**
+
+`cypher`:
+
+.. code-block:: cypher
+
+    MATCH (cloudAtlas {title: "Cloud Atlas"})<-[:DIRECTED]-(directors) RETURN directors.name
+
+This is possible, but getting out of the scope of ``py2neo``, the following are all cases where falling back to native cypher is probably best.
+
+`python`:
+
+.. code-block:: python
+
+    >>> results = graph.run('MATCH (cloudAtlas {title: "Cloud Atlas"})<-[:DIRECTED]-(directors) RETURN directors.name')
+    >>> print(list(results))
+    [<Record directors.name='Tom Tykwer'>,
+     <Record directors.name='Lilly Wachowski'>,
+     <Record directors.name='Lana Wachowski'>]
+
+The following will produce the same result, although is less elegant:
+
+`python`:
+
+.. code-block:: python
+
+    >>> cloudAtlas = matcher.match(title="Cloud Atlas").first()
+    >>> directors = r_matcher.match(r_type="DIRECTED", nodes=(None, cloudAtlas))
+    >>> for director in directors:
+    >>>     print(director.nodes[0]['name'])
+    Tom Tykwer
+    Lilly Wachowski
+    Lana Wachowski
+
+
+**Tom Hanks' co-actors...**
+
+`cypher`:
+
+.. code-block:: cypher
+
+   MATCH (tom:Person {name:"Tom Hanks"})-[:ACTED_IN]->(m)<-[:ACTED_IN]-(coActors) RETURN coActors.name
+
+`python`:
+
+.. code-block:: python
+
+    >>> results = graph.run('MATCH (tom:Person {name:"Tom Hanks"})-[:ACTED_IN]->(m)<-[:ACTED_IN]-(coActors) RETURN coActors.name')
+    >>> print(list(results))
+    [<Record coActors.name='Bill Paxton'>,
+     <Record coActors.name='Madonna'>,
+     <Record coActors.name='Geena Davis'>,
+     <Record coActors.name="Rosie O'Donnell">,
+     <Record coActors.name='Lori Petty'>,
+     <Record coActors.name='Philip Seymour Hoffman'>,
+     <Record coActors.name='Julia Roberts'>,
+     <Record coActors.name='Helen Hunt'>,
+     <Record coActors.name='Bill Paxton'>,
+     <Record coActors.name='Gary Sinise'>,
+     <Record coActors.name='Ed Harris'>,
+     <Record coActors.name='Kevin Bacon'>,
+     <Record coActors.name='Patricia Clarkson'>,
+     <Record coActors.name='Michael Clarke Duncan'>,
+     <Record coActors.name='David Morse'>,
+     <Record coActors.name='Sam Rockwell'>,
+     <Record coActors.name='Gary Sinise'>,
+     <Record coActors.name='Bonnie Hunt'>,
+     <Record coActors.name='James Cromwell'>,
+     <Record coActors.name='Ian McKellen'>,
+     <Record coActors.name='Audrey Tautou'>,
+     <Record coActors.name='Paul Bettany'>,
+     <Record coActors.name='Jim Broadbent'>,
+     <Record coActors.name='Hugo Weaving'>,
+     <Record coActors.name='Halle Berry'>,
+     <Record coActors.name='Liv Tyler'>,
+     <Record coActors.name='Charlize Theron'>,
+     <Record coActors.name='Meg Ryan'>,
+     <Record coActors.name='Nathan Lane'>,
+     <Record coActors.name='Victor Garber'>,
+     <Record coActors.name="Rosie O'Donnell">,
+     <Record coActors.name='Rita Wilson'>,
+     <Record coActors.name='Bill Pullman'>,
+     <Record coActors.name='Meg Ryan'>,
+     <Record coActors.name='Steve Zahn'>,
+     <Record coActors.name='Parker Posey'>,
+     <Record coActors.name='Dave Chappelle'>,
+     <Record coActors.name='Greg Kinnear'>,
+     <Record coActors.name='Meg Ryan'>]
+
+
+**How people are related to "Cloud Atlas"...**
+
+`cypher`:
+
+.. code-block:: cypher
+
+    MATCH (people:Person)-[relatedTo]-(:Movie {title: "Cloud Atlas"}) RETURN people.name, Type(relatedTo), relatedTo
+
+`python`:
+
+.. code-block:: python
+
+   >>> results = graph.run('MATCH (people:Person)-[relatedTo]-(:Movie {title: "Cloud Atlas"}) RETURN people.name, Type(relatedTo), relatedTo')
+   >>> print(list(results))
+   [<Record people.name='Jessica Thompson' Type(relatedTo)='REVIEWED' relatedTo=(Jessica Thompson)-[:REVIEWED {rating: 95, summary: 'An amazing journey'}]->(_105)>,
+   <Record people.name='Stefan Arndt' Type(relatedTo)='PRODUCED' relatedTo=(Stefan Arndt)-[:PRODUCED {}]->(_105)>,
+   <Record people.name='Tom Tykwer' Type(relatedTo)='DIRECTED' relatedTo=(Tom Tykwer)-[:DIRECTED {}]->(_105)>,
+   <Record people.name='Lilly Wachowski' Type(relatedTo)='DIRECTED' relatedTo=(Lilly Wachowski)-[:DIRECTED {}]->(_105)>,
+   <Record people.name='Lana Wachowski' Type(relatedTo)='DIRECTED' relatedTo=(Lana Wachowski)-[:DIRECTED {}]->(_105)>,
+   <Record people.name='David Mitchell' Type(relatedTo)='WROTE' relatedTo=(David Mitchell)-[:WROTE {}]->(_105)>,
+   <Record people.name='Jim Broadbent' Type(relatedTo)='ACTED_IN' relatedTo=(Jim Broadbent)-[:ACTED_IN {roles: ['Vyvyan Ayrs', 'Captain Molyneux', 'Timothy Cavendish']}]->(_105)>,
+   <Record people.name='Hugo Weaving' Type(relatedTo)='ACTED_IN' relatedTo=(Hugo Weaving)-[:ACTED_IN {roles: ['Bill Smoke', 'Haskell Moore', 'Tadeusz Kesselring', 'Nurse Noakes', 'Boardman Mephi', 'Old Georgie']}]->(_105)>,
+   <Record people.name='Halle Berry' Type(relatedTo)='ACTED_IN' relatedTo=(Halle Berry)-[:ACTED_IN {roles: ['Luisa Rey', 'Jocasta Ayrs', 'Ovid', 'Meronym']}]->(_105)>,
+   <Record people.name='Tom Hanks' Type(relatedTo)='ACTED_IN' relatedTo=(Tom Hanks)-[:ACTED_IN {roles: ['Zachry', 'Dr. Henry Goose', 'Isaac Sachs', 'Dermot Hoggins']}]->(_105)>]
