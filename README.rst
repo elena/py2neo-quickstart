@@ -453,3 +453,93 @@ https://neo4j.com/docs/developer-manual/current/cypher/clauses/match/#query-shor
 https://neo4j.com/docs/graph-algorithms/current/algorithms/shortest-path/
 
 
+Recommend
++++++++++
+
+Let's recommend new co-actors for Tom Hanks. A basic recommendation approach is to find connections past an immediate neighborhood which are themselves well connected.
+
+For Tom Hanks, that means:
+
+1. Find actors that Tom Hanks hasn't yet worked with, but his co-actors have.
+2. Find someone who can introduce Tom to his potential co-actor.
+
+``cypher``:
+
+.. code-block:: cypher
+
+    MATCH (tom:Person {name:"Tom Hanks"})-[:ACTED_IN]->(m)<-[:ACTED_IN]-(coActors),
+          (coActors)-[:ACTED_IN]->(m2)<-[:ACTED_IN]-(cocoActors)
+    WHERE NOT (tom)-[:ACTED_IN]->()<-[:ACTED_IN]-(cocoActors) AND tom <> cocoActors
+    RETURN cocoActors.name AS Recommended, count(*) AS Strength ORDER BY Strength DESC
+
+``python``:
+
+.. code-block:: python
+
+
+    >>> results = graph.run('MATCH (tom:Person {name:"Tom Hanks"})-[:ACTED_IN]->(m)<-[:ACTED_IN]-(coActors), (coActors)-[:ACTED_IN]->(m2)<-[:ACTED_IN]-(cocoActors) WHERE NOT (tom)-[:ACTED_IN]->()<-[:ACTED_IN]-(cocoActors) AND tom <> cocoActors RETURN cocoActors.name AS Recommended, count(*) AS Strength ORDER BY Strength DESC')
+    >>> results.data()
+    [{'Recommended': 'Tom Cruise', 'Strength': 5},
+     {'Recommended': 'Zach Grenier', 'Strength': 5},
+     {'Recommended': 'Cuba Gooding Jr.', 'Strength': 4},
+     {'Recommended': 'Keanu Reeves', 'Strength': 4},
+     {'Recommended': 'Carrie Fisher', 'Strength': 3},
+     {'Recommended': 'Carrie-Anne Moss', 'Strength': 3},
+     {'Recommended': 'Kelly McGillis', 'Strength': 3},
+     {'Recommended': 'Val Kilmer', 'Strength': 3},
+     {'Recommended': 'Anthony Edwards', 'Strength': 3},
+     {'Recommended': 'Laurence Fishburne', 'Strength': 3},
+     {'Recommended': 'Jack Nicholson', 'Strength': 3},
+     ...
+     {'Recommended': 'Emil Eifrem', 'Strength': 1},
+     {'Recommended': 'Stephen Rea', 'Strength': 1},
+     {'Recommended': 'John Hurt', 'Strength': 1},
+     {'Recommended': 'Christian Bale', 'Strength': 1},
+     {'Recommended': 'Robin Williams', 'Strength': 1},
+     {'Recommended': 'Demi Moore', 'Strength': 1},
+     {'Recommended': 'Aaron Sorkin', 'Strength': 1},
+     {'Recommended': 'Jonathan Lipnicki', 'Strength': 1},
+     {'Recommended': 'Jay Mohr', 'Strength': 1},
+     {'Recommended': 'Regina King', 'Strength': 1},
+     {'Recommended': 'Natalie Portman', 'Strength': 1}]
+
+``cypher``:
+
+.. code-block:: cypher
+
+    MATCH (tom:Person {name:"Tom Hanks"})-[:ACTED_IN]->(m)<-[:ACTED_IN]-(coActors),
+      (coActors)-[:ACTED_IN]->(m2)<-[:ACTED_IN]-(cruise:Person {name:"Tom Cruise"})
+    RETURN tom, m, coActors, m2, cruise
+
+``python``:
+
+.. code-block:: python
+
+    >>> results = graph.run('MATCH (tom:Person {name:"Tom Hanks"})-[:ACTED_IN]->(m)<-[:ACTED_IN]-(coActors), (coActors)-[:ACTED_IN]->(m2)<-[:ACTED_IN]-(cruise:Person {name:"Tom Cruise"}) RETURN tom, m, coActors, m2, cruise')
+    >>> results.data()
+    [{'tom': (_69:Person {born: 1956, name: 'Tom Hanks'}),
+    'm': (_154:Movie {released: 1995, tagline: 'Houston, we have a problem.', title: 'Apollo 13'}),
+    'coActors': (_17:Person {born: 1958, name: 'Kevin Bacon'}),
+    'm2': (_13:Movie {released: 1992, tagline: "In the heart of the nation's capital, in a courthouse of the U.S. government, one man will stop at nothing to keep his honor, and one will stop at nothing to find the truth.", title: 'A Few Good Men'}),
+    'cruise': (_14:Person {born: 1962, name: 'Tom Cruise'})},
+    {'tom': (_69:Person {born: 1956, name: 'Tom Hanks'}),
+    'm': (_140:Movie {released: 1999, tagline: "Walk a mile you'll never forget.", title: 'The Green Mile'}),
+    'coActors': (_40:Person {born: 1961, name: 'Bonnie Hunt'}),
+    'm2': (_35:Movie {released: 2000, tagline: 'The rest of his life begins now.', title: 'Jerry Maguire'}),
+    'cruise': (_14:Person {born: 1962, name: 'Tom Cruise'})},
+    {'tom': (_69:Person {born: 1956, name: 'Tom Hanks'}),
+    'm': (_76:Movie {released: 1990, tagline: 'A story of love, lava and burning desire.', title: 'Joe Versus the Volcano'}),
+    'coActors': (_32:Person {born: 1961, name: 'Meg Ryan'}),
+    'm2': (_27:Movie {released: 1986, tagline: 'I feel the need, the need for speed.', title: 'Top Gun'}),
+    'cruise': (_14:Person {born: 1962, name: 'Tom Cruise'})},
+    {'tom': (_69:Person {born: 1956, name: 'Tom Hanks'}),
+    'm': (_71:Movie {released: 1993, tagline: 'What if someone you never met, someone you never saw, someone you never knew was the only someone for you?', title: 'Sleepless in Seattle'}),
+    'coActors': (_32:Person {born: 1961, name: 'Meg Ryan'}),
+    'm2': (_27:Movie {released: 1986, tagline: 'I feel the need, the need for speed.', title: 'Top Gun'}),
+    'cruise': (_14:Person {born: 1962, name: 'Tom Cruise'})},
+    {'tom': (_69:Person {born: 1956, name: 'Tom Hanks'}),
+    'm': (_65:Movie {released: 1998, tagline: 'At odds in life... in love on-line.', title: "You've Got Mail"}),
+    'coActors': (_32:Person {born: 1961, name: 'Meg Ryan'}),
+    'm2': (_27:Movie {released: 1986, tagline: 'I feel the need, the need for speed.', title: 'Top Gun'}),
+    'cruise': (_14:Person {born: 1962, name: 'Tom Cruise'})}]
+
