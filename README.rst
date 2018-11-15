@@ -395,3 +395,61 @@ The following will produce the same result, although is less elegant:
     <Record people.name='Halle Berry' Type(relatedTo)='ACTED_IN' relatedTo=(Halle Berry)-[:ACTED_IN {roles: ['Luisa Rey', 'Jocasta Ayrs', 'Ovid', 'Meronym']}]->(_105)>,
     <Record people.name='Tom Hanks' Type(relatedTo)='ACTED_IN' relatedTo=(Tom Hanks)-[:ACTED_IN {roles: ['Zachry', 'Dr. Henry Goose', 'Isaac Sachs', 'Dermot Hoggins']}]->(_105)>]
 
+
+
+Solve
++++++
+
+
+You've heard of the classic "Six Degrees of Kevin Bacon"? That is simply a shortest path query called the "Bacon Path".
+
+1. Variable length patterns
+2. Built-in shortestPath() algorithm
+
+**Movies and actors up to 4 "hops" away from Kevin Bacon**
+
+``cypher``:
+
+.. code-block:: cypher
+
+    MATCH (bacon:Person {name:"Kevin Bacon"})-[*1..4]-(hollywood)
+    RETURN DISTINCT hollywood
+
+``python``:
+
+.. code-block:: python
+
+    >>> results = graph.run('MATCH (bacon:Person {name:"Kevin Bacon"})-[*1..4]-(hollywood) RETURN DISTINCT hollywood')
+    >>> results.data()
+    [<Record hollywood=(_149:Person {born: 1969, name: 'Michael Sheen'})>, ... <Record hollywood=(_29:Person {born: 1959, name: 'Val Kilmer'})>, <Record hollywood=(_28:Person {born: 1957, name: 'Kelly McGillis'})>, <Record hollywood=(_27:Movie {released: 1986, tagline: 'I feel the need, the need for speed.', title: 'Top Gun'})>]
+    >>> len(results.data())
+    135
+
+**Bacon path, the shortest path of any relationships to Meg Ryan**
+
+``cypher``:
+
+.. code-block:: cypher
+
+    MATCH p=shortestPath(
+      (bacon:Person {name:"Kevin Bacon"})-[*]-(meg:Person {name:"Meg Ryan"})
+    )
+    RETURN p
+
+``python``:
+
+.. code-block:: python
+
+    >>> results = graph.run('MATCH p=shortestPath((bacon:Person {name:"Kevin Bacon"})-[*]-(meg:Person {name:"Meg Ryan"})) RETURN p')
+    >>> results.data()
+    [{'p': (Kevin Bacon)-[:ACTED_IN {roles: ['Jack Swigert']}]->(_154)<-[:ACTED_IN {roles: ['Jim Lovell']}]-(Tom Hanks)-[:ACTED_IN {roles: ['Joe Banks']}]->(_76)<-[:ACTED_IN {roles: ['DeDe', 'Angelica Graynamore', 'Patricia Graynamore']}]-(Meg Ryan)}]
+
+
+
+For more information on shortest path:
+
+https://neo4j.com/docs/developer-manual/current/cypher/clauses/match/#query-shortest-path
+
+https://neo4j.com/docs/graph-algorithms/current/algorithms/shortest-path/
+
+
