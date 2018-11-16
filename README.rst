@@ -25,7 +25,12 @@ If this url works for you to access Neo4J: http://127.0.0.1:7474/browser/ , you 
 This is a smaller and similar dataset to the one provided here:
 https://neo4j.com/developer/movie-database/
 
-Let's replicate: ``:play movie-graph``
+Ready? OK, let's replicate: ``:play movie-graph``
+
+Here's how it's going to go:
+
+.. contents::
+
 
 Create
 ++++++
@@ -159,8 +164,6 @@ Example queries for finding individual nodes.
 
 First thing we need to connect to the database:
 
-See reference here: https://py2neo.org/v4/matching.html#py2neo.matching.NodeMatcher
-
 .. code-block:: python
 
     from py2neo import Graph, NodeMatcher
@@ -173,13 +176,15 @@ There are **multiple methods** of instantiating ``NodeMatcher``.
    >>> nodes_matcher = NodeMatcher(graph)
    >>> nodes_matcher.match()
 
-**this is the same as**:
+https://py2neo.org/v4/matching.html#py2neo.matching.NodeMatcher
 
-https://py2neo.org/v4/database.html#py2neo.database.Graph.nodes
+**this is the same as**:
 
 .. code-block:: python
 
    >>> graph.nodes.match()
+
+https://py2neo.org/v4/database.html#py2neo.database.Graph.nodes
 
 Here is a quick demo from the docs:
 
@@ -294,9 +299,10 @@ There are a list of standard operators available such as ``=``, ``<>``, etc. See
      (_181:Movie {released: 1992, tagline: 'Once in a lifetime you get a chance to do something different.', title: 'A League of Their Own'})]
 
 
+Watch the prefix **`"_."`** in the ``where`` statement.
+
 https://py2neo.org/v4/matching.html#py2neo.matching.NodeMatch.where
 
-Watch the prefix **`"_."`** in the ``where`` statement.
 
 ---
 
@@ -308,8 +314,6 @@ Finding patterns within the graph.
 1. Actors are people who acted in movies
 2. Directors are people who directed a movie
 3. What other relationships exist?
-
-See reference here: https://py2neo.org/v4/matching.html#py2neo.matching.RelationshipMatch
 
 .. code-block:: python
 
@@ -323,6 +327,8 @@ There are **multiple methods** of instantiating ``RelationshipMatcher``.
    >>> relationship_matcher = RelationshipMatcher(graph)
    >>> relationship_matcher.match()
 
+https://py2neo.org/v4/matching.html#py2neo.matching.RelationshipMatch
+
 This is **the same as**:
 
 .. code-block:: python
@@ -331,11 +337,11 @@ This is **the same as**:
 
 This is **also the same as**:
 
-See reference here: https://py2neo.org/v4/database.html#py2neo.database.Graph.match
-
 .. code-block:: python
 
    >>> graph.match()
+
+https://py2neo.org/v4/database.html#py2neo.database.Graph.match
 
 ---
 
