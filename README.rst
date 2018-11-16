@@ -545,3 +545,57 @@ For Tom Hanks, that means:
     'm2': (_27:Movie {released: 1986, tagline: 'I feel the need, the need for speed.', title: 'Top Gun'}),
     'cruise': (_14:Person {born: 1962, name: 'Tom Cruise'})}]
 
+
+---
+
+Clean up
+++++++++
+
+When you're done experimenting, you can remove the movie data set.
+
+Note:
+
+1. Nodes can't be deleted if relationships exist
+2. Delete both nodes and relationships together
+
+*WARNING: This will remove all Person and Movie nodes!*
+
+
+| **Delete all Movie and Person nodes, and their relationships**
+
+``cypher``:
+
+.. code-block:: cypher
+
+    MATCH (n) DETACH DELETE n
+
+
+``python``:
+
+ https://py2neo.org/v4/database.html#py2neo.database.Transaction.delete
+
+.. code-block:: python
+
+    >>> graph = Graph(password='[yoursekretpasswordhere]')
+    >>> len(graph.match())
+    253
+    >>> graph.delete_all()
+
+
+| **Note you only need to compare property values like this when first creating relationships**
+| **Prove that the Movie Graph is gone**
+
+``cypher``:
+
+.. code-block:: cypher
+
+    MATCH (n) RETURN n
+
+.. code-block:: python
+
+    >>> len(graph.match())
+    0
+
+    >>> list(graph.match())
+    []
+
