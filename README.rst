@@ -150,6 +150,7 @@ Step 3: Commit
 
 The gist of the full dataset can be found here: https://gist.github.com/elena/733275bd55fba0a48cd885fe0427e5d4
 
+---
 
 Find
 ++++
@@ -158,15 +159,43 @@ Example queries for finding individual nodes.
 
 First thing we need to connect to the database:
 
-See reference here: https://py2neo.org/v4/matching.html
+See reference here: https://py2neo.org/v4/matching.html#py2neo.matching.NodeMatcher
 
 .. code-block:: python
 
     from py2neo import Graph, NodeMatcher
     graph = Graph(password='[yoursekretpasswordhere]')
-    matcher = NodeMatcher(graph)
 
-**Find the actor named "Tom Hanks"...**
+There are **multiple methods** of instantiating ``NodeMatcher``.
+
+.. code-block:: python
+
+   >>> nodes_matcher = NodeMatcher(graph)
+   >>> nodes_matcher.match()
+
+**this is the same as**:
+
+https://py2neo.org/v4/database.html#py2neo.database.Graph.nodes
+
+.. code-block:: python
+
+   >>> graph.nodes.match()
+
+Here is a quick demo from the docs:
+
+.. code-block:: python
+
+    >>> graph = Graph()
+    >>> graph.nodes[1234]
+    (_1234:Person {name: 'Alice'})
+    >>> graph.nodes.get(1234)
+    (_1234:Person {name: 'Alice'})
+    >>> graph.nodes.match("Person", name="Alice").first()
+    (_1234:Person {name: 'Alice'})
+
+---
+
+| **Find the actor named "Tom Hanks"...**
 
 ``cypher``:
 
@@ -178,12 +207,19 @@ See reference here: https://py2neo.org/v4/matching.html
 
 .. code-block:: python
 
-    >>> tom = matcher.match(name="Tom Hanks").first()
-    >>> print(tom)
+    >>> nodes_matcher = NodeMatcher(graph)
+    >>> node_matcher.match(name="Tom Hanks").first()
+    (_69:Person {born: 1956, name: 'Tom Hanks'})
+
+    # This is the same as:
+    >>> graph.nodes.match(name="Tom Hanks").first()
     (_69:Person {born: 1956, name: 'Tom Hanks'})
 
 
-**Find the movie with title "Cloud Atlas"...**
+There may be performance differences based upon your use case. As a general rule it's better to be specific in queries (in this case using the label "Person" would assist performance).
+
+
+| **Find the movie with title "Cloud Atlas"...**
 
 ``cypher``:
 
@@ -195,12 +231,11 @@ See reference here: https://py2neo.org/v4/matching.html
 
 .. code-block:: python
 
-    >>> cloudAtlas = matcher.match(title="Cloud Atlas").first()
-    >>> print(cloudAtlas)
+    >>> graph.nodes.match(title="Cloud Atlas").first()
     (_105:Movie {released: 2012, tagline: 'Everything is connected', title: 'Cloud Atlas'})
 
 
-**Find 10 people...**
+| **Find 10 people...**
 
 ``cypher``:
 
@@ -212,7 +247,7 @@ See reference here: https://py2neo.org/v4/matching.html
 
 .. code-block:: python
 
-    >>> people = matcher.match("Person").limit(10)
+    >>> people = graph.nodes.match("Person").limit(10)
     >>> print(people)
     <py2neo.matching.NodeMatch object at 0x7fc00046ac18>
     >>> print(list(people))
@@ -228,7 +263,7 @@ See reference here: https://py2neo.org/v4/matching.html
      (_12:Person {born: 1944, name: 'Taylor Hackford'})]
 
 
-**Find movies released in the 1990s...**
+| **Find movies released in the 1990s...**
 
 ``cypher``:
 
@@ -238,11 +273,11 @@ See reference here: https://py2neo.org/v4/matching.html
 
 ``python``:
 
-Note: watch the prefix **`"_."`** in the ``where`` statement.
+There are a list of standard operators available such as ``=``, ``<>``, etc. See the full list here: https://py2neo.org/v4/matching.html#node-matching
 
 .. code-block:: python
 
-    >>> nineties = matcher.match("Movie").where('_.released >= 1990', '_.released < 2000')
+    >>> nineties = graph.nodes.match("Movie").where('_.released >= 1990', '_.released < 2000')
     >>> print(list(nineties))
     [(_9:Movie {released: 1997, tagline: 'Evil has its winning ways', title: "The Devil's Advocate"}),
      (_13:Movie {released: 1992, tagline: "In the heart of the nation's capital, in a courthouse of the U.S. government, one man will stop at nothing to keep his honor, and one will stop at nothing to find the truth.", title: 'A Few Good Men'}),
@@ -258,8 +293,12 @@ Note: watch the prefix **`"_."`** in the ``where`` statement.
      (_167:Movie {released: 1999, tagline: "One robot's 200 year journey to become an ordinary man.", title: 'Bicentennial Man'}),
      (_181:Movie {released: 1992, tagline: 'Once in a lifetime you get a chance to do something different.', title: 'A League of Their Own'})]
 
-See full reference here: https://py2neo.org/v4/matching.html
 
+https://py2neo.org/v4/matching.html#py2neo.matching.NodeMatch.where
+
+Watch the prefix **`"_."`** in the ``where`` statement.
+
+---
 
 Query
 +++++
@@ -270,18 +309,37 @@ Finding patterns within the graph.
 2. Directors are people who directed a movie
 3. What other relationships exist?
 
-See reference here: https://py2neo.org/v4/matching.html
-
-``RelationshipMatcher`` needs to be imported and instantiated:
+See reference here: https://py2neo.org/v4/matching.html#py2neo.matching.RelationshipMatch
 
 .. code-block:: python
 
     from py2neo import Graph, RelationshipMatcher
     graph = Graph(password='[yoursekretpasswordhere]')
-    r_matcher = RelationshipMatcher(graph)
 
+There are **multiple methods** of instantiating ``RelationshipMatcher``.
 
-**List all Tom Hanks movies...**
+.. code-block:: python
+
+   >>> relationship_matcher = RelationshipMatcher(graph)
+   >>> relationship_matcher.match()
+
+This is **the same as**:
+
+.. code-block:: python
+
+   >>> graph.relationships.match()
+
+This is **also the same as**:
+
+See reference here: https://py2neo.org/v4/database.html#py2neo.database.Graph.match
+
+.. code-block:: python
+
+   >>> graph.match()
+
+---
+
+| **List all Tom Hanks movies...**
 
 ``cypher``:
 
@@ -293,9 +351,8 @@ See reference here: https://py2neo.org/v4/matching.html
 
 .. code-block:: python
 
-   >>> r_matcher = RelationshipMatcher(graph)
-   >>> tom = matcher.match(name="Tom Hanks").first()
-   >>> tomHanksMovies = r_matcher.match(nodes=[tom], r_type="ACTED_IN")
+   >>> tom = graph.nodes.match(name="Tom Hanks").first()
+   >>> tomHanksMovies = graph.match(nodes=[tom], r_type="ACTED_IN")
    >>> print(list(tomHanksMovies))
    [(Tom Hanks)-[:ACTED_IN {roles: ['Jimmy Dugan']}]->(_181),
     (Tom Hanks)-[:ACTED_IN {roles: ['Rep. Charlie Wilson']}]->(_169),
@@ -307,8 +364,11 @@ See reference here: https://py2neo.org/v4/matching.html
     (Tom Hanks)-[:ACTED_IN {roles: ['Joe Banks']}]->(_76),
     (Tom Hanks)-[:ACTED_IN {roles: ['Joe Fox']}]->(_65)]
 
+    # This is the same as
+    >>> tomHanksMovies = graph.relationships.match(nodes=[tom], r_type="ACTED_IN")
 
-**Who directed "Cloud Atlas"?**
+
+| **Who directed "Cloud Atlas"?**
 
 ``cypher``:
 
@@ -335,7 +395,7 @@ The following will produce the same result, although is less elegant:
 .. code-block:: python
 
     >>> cloudAtlas = matcher.match(title="Cloud Atlas").first()
-    >>> directors = r_matcher.match(r_type="DIRECTED", nodes=(None, cloudAtlas))
+    >>> directors = graph.match(r_type="DIRECTED", nodes=(None, cloudAtlas)) # << see notes about use of nodes=() here
     >>> for director in directors:
     >>>     print(director.nodes[0]['name'])
     Tom Tykwer
@@ -343,7 +403,15 @@ The following will produce the same result, although is less elegant:
     Lana Wachowski
 
 
-**Tom Hanks' co-actors...**
+There are several important things to note here:
+
+- ``r_type`` is a kwarg to ``.match()``
+- ``nodes`` is a **set**, of: ``(NodeTo, NodeFrom)`` -- in this case, the "from" Node is ``None``, because that's the undefined data that we want to find.
+
+In the ``tomHanksMovies`` example above only one of the ``nodes`` set is defined because we're being looser with our requirements. For this kwarg the correct number of inputs in the set is *one* or *two*, in a particular order.
+
+
+| **Tom Hanks' co-actors...**
 
 ``cypher``:
 
@@ -372,7 +440,7 @@ The following will produce the same result, although is less elegant:
       {'coActors.name': 'Meg Ryan'}]
 
 
-**How people are related to "Cloud Atlas"...**
+| **How people are related to "Cloud Atlas"...**
 
 ``cypher``:
 
@@ -398,6 +466,44 @@ The following will produce the same result, although is less elegant:
     <Record people.name='Tom Hanks' Type(relatedTo)='ACTED_IN' relatedTo=(Tom Hanks)-[:ACTED_IN {roles: ['Zachry', 'Dr. Henry Goose', 'Isaac Sachs', 'Dermot Hoggins']}]->(_105)>]
 
 
+``Python`` has strengths far beyond ``cypher``, though ``cypher`` is also magically strong, so we're not too fussed by dropping back to native ``cypher`` here. We get the best of both worlds.
+
+For example:
+
+.. code-block:: python
+
+    >>> results.to_table()
+    people.name      | Type(relatedTo) | relatedTo
+    ------------------|-----------------|---------------------------------------------------------------------------------------------------------------------------------------------------
+    Jessica Thompson | REVIEWED        | (Jessica Thompson)-[:REVIEWED {rating: 95, summary: 'An amazing journey'}]->(_94)
+    Lilly Wachowski  | DIRECTED        | (Lilly Wachowski)-[:DIRECTED {}]->(_94)
+    Lana Wachowski   | DIRECTED        | (Lana Wachowski)-[:DIRECTED {}]->(_94)
+    Jim Broadbent    | ACTED_IN        | (Jim Broadbent)-[:ACTED_IN {roles: ['Vyvyan Ayrs', 'Captain Molyneux', 'Timothy Cavendish']}]->(_94)
+    Tom Tykwer       | DIRECTED        | (Tom Tykwer)-[:DIRECTED {}]->(_94)
+    Hugo Weaving     | ACTED_IN        | (Hugo Weaving)-[:ACTED_IN {roles: ['Bill Smoke', 'Haskell Moore', 'Tadeusz Kesselring', 'Nurse Noakes', 'Boardman Mephi', 'Old Georgie']}]->(_94)
+    Halle Berry      | ACTED_IN        | (Halle Berry)-[:ACTED_IN {roles: ['Luisa Rey', 'Jocasta Ayrs', 'Ovid', 'Meronym']}]->(_94)
+    Tom Hanks        | ACTED_IN        | (Tom Hanks)-[:ACTED_IN {roles: ['Zachry', 'Dr. Henry Goose', 'Isaac Sachs', 'Dermot Hoggins']}]->(_94)
+    David Mitchell   | WROTE           | (David Mitchell)-[:WROTE {}]->(_94)
+    Stefan Arndt     | PRODUCED        | (Stefan Arndt)-[:PRODUCED {}]->(_94)
+
+Other possible completions are:
+
+.. code-block:: python
+
+    # pandas
+    results.to_data_frame()
+    results.to_series()
+
+    # sympy
+    results.to_matrix()
+
+     # numpy
+    results.to_ndarray()
+
+
+.. image:: magic.gif
+
+---
 
 Solve
 +++++
@@ -408,7 +514,7 @@ You've heard of the classic "Six Degrees of Kevin Bacon"? That is simply a short
 1. Variable length patterns
 2. Built-in shortestPath() algorithm
 
-**Movies and actors up to 4 "hops" away from Kevin Bacon**
+| **Movies and actors up to 4 "hops" away from Kevin Bacon**
 
 ``cypher``:
 
@@ -427,7 +533,7 @@ You've heard of the classic "Six Degrees of Kevin Bacon"? That is simply a short
     >>> len(results.data())
     135
 
-**Bacon path, the shortest path of any relationships to Meg Ryan**
+| **Bacon path, the shortest path of any relationships to Meg Ryan**
 
 ``cypher``:
 
@@ -454,6 +560,7 @@ https://neo4j.com/docs/developer-manual/current/cypher/clauses/match/#query-shor
 
 https://neo4j.com/docs/graph-algorithms/current/algorithms/shortest-path/
 
+---
 
 Recommend
 +++++++++
@@ -464,6 +571,8 @@ For Tom Hanks, that means:
 
 1. Find actors that Tom Hanks hasn't yet worked with, but his co-actors have.
 2. Find someone who can introduce Tom to his potential co-actor.
+
+| **Extend Tom Hanks co-actors, to find co-co-actors who haven't worked with Tom Hanks...**
 
 ``cypher``:
 
@@ -505,6 +614,9 @@ For Tom Hanks, that means:
      {'Recommended': 'Regina King', 'Strength': 1},
      {'Recommended': 'Natalie Portman', 'Strength': 1}]
 
+
+| **Find someone to introduce Tom Hanks to Tom Cruise**
+
 ``cypher``:
 
 .. code-block:: cypher
@@ -545,6 +657,8 @@ For Tom Hanks, that means:
     'm2': (_27:Movie {released: 1986, tagline: 'I feel the need, the need for speed.', title: 'Top Gun'}),
     'cruise': (_14:Person {born: 1962, name: 'Tom Cruise'})}]
 
+
+This allows you to use the full force of python on the results. That's pretty great.
 
 ---
 
@@ -599,3 +713,14 @@ Note:
     >>> list(graph.match())
     []
 
+---
+
+This guide does not cover many interesting features of ``neo4j`` and ``py2neo`` such as the ability to ``update`` and ``merge``:
+
+https://py2neo.org/v4/data.html
+
+https://py2neo.org/v4/database.html
+
+Importantly the ``ogm`` (**"Object Graph Mapper"**, analogous to the ``orm`` "Object Relational Mapper" used by many frameworks for traditional relational databases) feature is not covered here: https://py2neo.org/v4/ogm.html
+
+~Fin
