@@ -16,14 +16,16 @@ We are so grateful to https://github.com/technige for combining them as https://
 
 Hopefully by this stage you have a little familiarity with both ``python`` and ``neo4j``\/``cypher``.
 
-If you're familiar with the example provided by default when you select **"Jump into code: Movie Graph"**.
+If you'd like to know more about ``Python`` there is a whole internet of resources, we like https://realpython.com/start-here/ or https://docs.python-guide.org/intro/learning/
+
+If you'd like to know more about ``Neo4J``, most people will become familiar with the materials we use here by the simple browser interface that is easy to install using the instructions here: https://neo4j.com/developer/guide-neo4j-browser/
+
+If this url works for you to access Neo4J: http://127.0.0.1:7474/browser/ , you ready for this quickstart! The code used below come from **"Jump into code: Movie Graph"**.
 
 This is a smaller and similar dataset to the one provided here:
 https://neo4j.com/developer/movie-database/
 
-Let's replicate
-
-``:play movie-graph``
+Let's replicate: ``:play movie-graph``
 
 Create
 ++++++
