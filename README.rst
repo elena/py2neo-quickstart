@@ -16,9 +16,9 @@ We are so grateful to https://github.com/technige for combining them as https://
 
 Hopefully by this stage you have a little familiarity with both ``python`` and ``neo4j``\/``cypher``.
 
-If you'd like to know more about ``Python`` there is a whole internet of resources, we like https://realpython.com/start-here/ or https://docs.python-guide.org/intro/learning/
+**If you'd like to know more about ``Python``**: there is a whole internet of resources, we like https://realpython.com/start-here/ or https://docs.python-guide.org/intro/learning/
 
-If you'd like to know more about ``Neo4J``, most people will become familiar with the materials we use here by the simple browser interface that is easy to install using the instructions here: https://neo4j.com/developer/guide-neo4j-browser/
+**If you'd like to know more about ``Neo4J``**: most people will become familiar with the materials we use here by the simple browser interface that is easy to install using the instructions here: https://neo4j.com/developer/guide-neo4j-browser/
 
 If this url works for you to access Neo4J: http://127.0.0.1:7474/browser/ , you ready for this quickstart! The code used below come from **"Jump into code: Movie Graph"**.
 
@@ -67,8 +67,8 @@ This is the same in ``py2neo``. There are 3 steps.
 # Step 3: Commit your Subgraphs (https://py2neo.org/v4/data.html#subgraph-objects)
 
 
-Step 1: Connect
----------------
+Step 1: Connect to Graph using Py2Neo
+-------------------------------------
 
 .. code-block:: python
 
@@ -80,8 +80,8 @@ Step 1: Connect
 There are plenty of options for connecting to your database if this implementation doesn't work for you. See the reference here: https://py2neo.org/v4/database.html#py2neo.database.Graph
 
 
-Step 2: Create ``Node`` and ``Relationship`` Subgraphs
-------------------------------------------------------
+Step 2: Create ``Node`` and ``Relationship`` Subgraphs using Py2Neo
+-------------------------------------------------------------------
 
 Full ``Node`` and ``Relationship`` reference: https://py2neo.org/v4/data.html
 
@@ -125,8 +125,8 @@ Note: This looks great but **YOUR DB OBJECTS DO NOT EXIST YET!**
 They need to committed to the database per the next step.
 
 
-Step 3: Commit
---------------
+Step 3: Commit using Py2Neo
+---------------------------
 
 .. code-block:: python
 
