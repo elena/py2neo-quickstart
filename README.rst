@@ -8,7 +8,7 @@ As everyone knows:
 
 ``neo4j`` == amazing
 
-.. image:: both.gif
+. image:: both.gif
 
 ``python`` + ``neo4j`` = ``Py2Neo`` <3
 
@@ -59,7 +59,6 @@ If you're cool with this, you're ready for this quickstart!
 
 Ready? OK, let's replicate: ``:play movie-graph``
 
-Here's how it's going to go:
 
 .. contents::
 
@@ -67,10 +66,11 @@ Here's how it's going to go:
 Create
 ++++++
 
-Here's the ``cypher`` from this tutorial:
+Tutorial native ``cypher``, hopefully this looks familiar (this is not python):
 
 .. code-block:: cypher
 
+    // Nodes
     CREATE (TheMatrix:Movie {title:'The Matrix', released:1999, tagline:'Welcome to the Real World'})
     CREATE (Keanu:Person {name:'Keanu Reeves', born:1964})
     CREATE (Carrie:Person {name:'Carrie-Anne Moss', born:1967})
@@ -81,6 +81,8 @@ Here's the ``cypher`` from this tutorial:
     CREATE (JoelS:Person {name:'Joel Silver', born:1952})
     CREATE (Emil:Person {name:"Emil Eifrem", born:1978})
     CREATE (Emil)-[:ACTED_IN {roles:["Emil"]}]->(TheMatrix)
+
+    // Relationships
     CREATE
       (Keanu)-[:ACTED_IN {roles:['Neo']}]->(TheMatrix),
       (Carrie)-[:ACTED_IN {roles:['Trinity']}]->(TheMatrix),
@@ -90,16 +92,31 @@ Here's the ``cypher`` from this tutorial:
       (LanaW)-[:DIRECTED]->(TheMatrix),
       (JoelS)-[:PRODUCED]->(TheMatrix)
 
-This is the same in ``py2neo``. There are 3 steps.
 
-# Step 1: Connect to your GraphDB
+You'll notice that this is effectivley **1 step**, where you create:
 
-# Step 2: Create your ``Node`` and ``Relationship`` objects
+    Step 1. ``CREATE`` ``nodes``, then ``CREATE`` ``relationships``.
 
-# Step 3: Commit your Subgraphs (https://py2neo.org/v4/data.html#subgraph-objects)
+You don't really think about committing this transaction.
 
+---
 
-Step 1: Connect to Graph using Py2Neo
+Using the ``python`` driver/``py2neo`` you must specifically think about both:
+
+* **Connecting** to your Graph DB
+* **Committing** the transaction
+
+So using ``py2neo`` there are **3 steps**.
+
+    Step 0: Connect to your GraphDB
+
+    Step 1: Create your ``Node`` and ``Relationship`` objects
+
+    Step 2: Commit your Subgraphs (https://py2neo.org/v5/data.html#subgraph-objects)
+
+--
+
+Step 0: Connect to Graph using Py2Neo
 -------------------------------------
 
 .. code-block:: python
@@ -109,23 +126,47 @@ Step 1: Connect to Graph using Py2Neo
     graph = Graph(password='[yoursekretpasswordhere]')
 
 
-There are plenty of options for connecting to your database if this implementation doesn't work for you. See the reference here: https://py2neo.org/v4/database.html#py2neo.database.Graph
+There are plenty of options for connecting to your database if this implementation
+doesn't work for you.
+
+For example, the following are all functionally equivalent:
+
+.. code-block:: python
+
+    my_graph = Graph(password='[mysekretpasswordhere]')
+
+.. code-block:: python
+
+    my_graph = Graph(host="localhost", password='[mysekretpasswordhere]')
+
+.. code-block:: python
+
+    my_graph = Graph("bolt://localhost:7687", password='[mysekretpasswordhere]')
 
 
-Step 2: Create ``Node`` and ``Relationship`` Subgraphs using Py2Neo
+See the reference here: https://py2neo.org/v5/database.html#py2neo.database.Graph
+
+Note that as of Neo4j version 4: if you have **multiple graphs databases**, you
+can choose which database you connect to using the ``name`` argument, see the docs above.
+Multi-database support is in active development at the Neo4j level in versions 4 add 5.
+https://neo4j.com/developer/manage-multiple-databases/
+
+A full list of database ``names`` can be shown through the Cypher ``SHOW DATABASES`` command.
+
+---
+
+Step 1: Create ``Node`` and ``Relationship`` Subgraphs using Py2Neo
 -------------------------------------------------------------------
 
-Full ``Node`` and ``Relationship`` reference: https://py2neo.org/v4/data.html
+Full ``Node`` and ``Relationship`` reference: https://py2neo.org/v5/data.html
 
 .. code-block:: python
 
     from py2neo import Node, Relationship
 
-    # Movie
+    # Nodes
     TheMatrix = Node("Movie", title='The Matrix', released=1999,
                      tagline='Welcome to the Real World')
-
-    # Persons
     Keanu = Node("Person", name='Keanu Reeves', born=1964)
     Carrie = Node("Person", name='Carrie-Anne Moss', born=1967)
     Laurence = Node("Person", name='Laurence Fishburne', born=1961)
@@ -139,8 +180,6 @@ Full ``Node`` and ``Relationship`` reference: https://py2neo.org/v4/data.html
     LillyWTheMatrix = Relationship(LillyW, "DIRECTED", TheMatrix)
     LanaWTheMatrix = Relationship(LanaW, "DIRECTED", TheMatrix)
     JoelSTheMatrix = Relationship(JoelS, "PRODUCED", TheMatrix)
-
-    # Relationships with roles property
     KeanuTheMatrix = Relationship(Keanu, "ACTED_IN", TheMatrix)
     KeanuTheMatrix['roles'] = ['Neo']
     CarrieTheMatrix = Relationship(Carrie, "ACTED_IN", TheMatrix)
@@ -154,10 +193,10 @@ Full ``Node`` and ``Relationship`` reference: https://py2neo.org/v4/data.html
 
 Note: This looks great but **YOUR DB OBJECTS DO NOT EXIST YET!**
 
-They need to committed to the database per the next step.
+They need to committed to the database.
 
 
-Step 3: Commit using Py2Neo
+Step 2: Commit using Py2Neo
 ---------------------------
 
 .. code-block:: python
