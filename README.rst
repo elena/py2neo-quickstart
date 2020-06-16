@@ -12,18 +12,50 @@ As everyone knows:
 
 ``python`` + ``neo4j`` = ``Py2Neo`` <3
 
-We are so grateful to https://github.com/technige for combining them as https://github.com/technige/py2neo.
+We are so grateful to https://github.com/technige for combining them as
+https://github.com/technige/py2neo.
 
-Hopefully by this stage you have a little familiarity with both ``python`` and ``neo4j``\/``cypher``.
+---
 
-**If you'd like to know more about ``Python``**: there is a whole internet of resources, we like https://realpython.com/start-here/ or https://docs.python-guide.org/intro/learning/
+    This guide exists to demonstrate how to run the ``cypher`` in the built-in `Neo4j` tutorial **"movie demo database"** using `technige<https://github.com/technige>`_'s `Py2Neo<https://github.com/technige/py2neo>`_.
 
-**If you'd like to know more about ``Neo4J``**: most people will become familiar with the materials we use here by the simple browser interface that is easy to install using the instructions here: https://neo4j.com/developer/guide-neo4j-browser/
+---
 
-If this url works for you to access Neo4J: http://127.0.0.1:7474/browser/ , you ready for this quickstart! The code used below come from **"Jump into code: Movie Graph"**.
+Both the python driver for neo4j and py2neo are actively being developed. This guide was created
+based on versions:
 
-This is a smaller and similar dataset to the one provided here:
-https://neo4j.com/developer/movie-database/
+* Py2neo v5
+* Neo4j 4.0
+
+This is **not** a beginner-beginner tutorial, but it's
+pretty close to the beginning. We'll be assuming that you know what both ``python``
+and ``Neo4j``\/``cypher`` are and have them both running and have played with
+them a bit and are maybe still learning.
+
+**If you'd like to know more about ``Python``**: the programming language: there
+is a whole internet of resources, this is the official we like guide to kicking
+off: https://wiki.python.org/moin/BeginnersGuide/Download.
+
+**If you'd like to know more about ``Neo4j``**: the awesome-sauce property graph
+database. Take your first steps using the docs here:
+https://neo4j.com/developer/get-started/.
+
+Going forward we're going to use jargon and assume you are already familiar with these <3
+
+
+The built-in `Neo4j` tutorial "movie demo database" is one of the first things
+you see when you first open the `Neo4j` browser interface. The instructions to
+install this are here: https://neo4j.com/developer/guide-neo4j-browser/
+
+Locally this url works to access Neo4j: http://localhost:7474/browser/. From
+here you can see the big friendly **"Jump into code: Movie Graph"**. This is a
+smaller and similar dataset to the bigger more official one provided by `Neo4j`
+here: https://neo4j.com/developer/movie-database/
+
+If you're cool with this, you're ready for this quickstart!
+
+
+
 
 Ready? OK, let's replicate: ``:play movie-graph``
 
