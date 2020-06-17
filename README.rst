@@ -19,8 +19,11 @@ https://github.com/technige/py2neo.
 
     This guide exists to demonstrate how to run the ``cypher`` in the built-in
     `Neo4j` tutorial **"movie demo database"** using
-    `technige<https://github.com/technige>`_'s
-    `Py2Neo<https://github.com/technige/py2neo>`_.
+    technige_'s
+    Py2Neo_.
+
+.. _technige: https://github.com/technige
+.. _Py2Neo: https://github.com/technige/py2neo
 
 ---
 
@@ -82,8 +85,8 @@ http://localhost:7474/browser/. From here you can see the big friendly
 
 In this document we going to replicate this ``:play movie-graph`` using Py2Neo.
 
-All code examples presented are also here:
-`Movie Graph as Py2Neo Jupyter Notebook<https://github.com/elena/py2neo-quickstart/blob/main/py2neo-quickstart.ipynb>`_
+All code examples presented are also here: `Movie Graph as Py2Neo Jupyter Notebook <https://github.com/elena/py2neo-quickstart/blob/main/py2neo-quickstart.ipynb>`_
+
 
 ---
 
@@ -268,9 +271,7 @@ This is just a sample from the more detailed example database provided at:
 https://neo4j.com/developer/movie-database/. The gist of the full dataset can be
 found here: https://gist.github.com/elena/733275bd55fba0a48cd885fe0427e5d4
 
-The full set is also with the code examples that go along with this here:
-`Movie Graph as Py2Neo Jupyter Notebook<https://github.com/elena/py2neo-quickstart/blob/main/py2neo-quickstart.ipynb>`_
-
+The full set is also with the code examples that go along with this here: `Movie Graph as Py2Neo Jupyter Notebook <https://github.com/elena/py2neo-quickstart/blob/main/py2neo-quickstart.ipynb>`_
 
 ---
 
@@ -337,7 +338,7 @@ Quick demo:
 
 ---
 
-Demo from `docs<https://py2neo.org/v5/database.html#py2neo.database.Graph.nodes>`_:
+Demo from https://py2neo.org/v5/database.html#py2neo.database.Graph.nodes:
 
 .. code-block:: python
 
@@ -363,7 +364,7 @@ Demo from `docs<https://py2neo.org/v5/database.html#py2neo.database.Graph.nodes>
 ---
 
 Find the actor named "Tom Hanks"...
-```````````````````````````````````
+-----------------------------------
 
 ``cypher``:
 
@@ -392,7 +393,7 @@ rule it's better to be specific in queries (in this case using the label
 
 
 Find the movie with title "Cloud Atlas"...
-``````````````````````````````````````````
+------------------------------------------
 
 ``cypher``:
 
@@ -412,7 +413,7 @@ Find the movie with title "Cloud Atlas"...
 
 
 Find 10 people...
-`````````````````
+-----------------
 
 ``cypher``:
 
@@ -447,7 +448,7 @@ object, which is probably not what you want.
 
 
 Find movies released in the 1990s...
-````````````````````````````````````
+------------------------------------
 
 ``cypher``:
 
@@ -513,7 +514,7 @@ https://py2neo.org/v5/database.html#py2neo.database.Graph.match
 ---
 
 List all Tom Hanks movies...
-````````````````````````````
+----------------------------
 
 ``cypher``:
 
@@ -541,7 +542,7 @@ List all Tom Hanks movies...
 
 
 Who directed "Cloud Atlas"?
-```````````````````````````
+---------------------------
 
 ``cypher``:
 
@@ -592,7 +593,7 @@ xplicit with our requirements. For this kwarg the correct number of inputs in th
 
 
 Tom Hanks' co-actors...
-```````````````````````
+-----------------------
 
 ``cypher``:
 
@@ -718,7 +719,7 @@ Solve
 
 
 Movies and actors up to 4 "hops" away from Kevin Bacon
-``````````````````````````````````````````````````````
+------------------------------------------------------
 
 ``cypher``:
 
@@ -759,7 +760,7 @@ Note that this return a lot of results:
 
 
 Bacon path, the shortest path of any relationships to Meg Ryan
-``````````````````````````````````````````````````````````````
+--------------------------------------------------------------
 
 ``cypher``:
 
@@ -823,7 +824,7 @@ Recommend
 
 
 Extend Tom Hanks co-actors, to find co-co-actors who haven't worked with Tom Hanks...
-`````````````````````````````````````````````````````````````````````````````````````
+-------------------------------------------------------------------------------------
 
 ``cypher``:
 
@@ -925,7 +926,7 @@ Note:
 
 
 Delete all Movie and Person nodes, and their relationships
-``````````````````````````````````````````````````````````
+----------------------------------------------------------
 
 ``cypher``:
 
@@ -947,13 +948,17 @@ Delete all Movie and Person nodes, and their relationships
 
 .. code-block:: python
 
+   # !! WARNING: This will remove all Person and Movie nodes !!
+
    graph.delete_all()
 
 
 https://py2neo.org/v5/database.html#py2neo.database.Transaction.delete
 
-**Note you only need to compare property values like this when first creating relationships**
-**Prove that the Movie Graph is gone**
+*Note: you only need to compare property values like this when first creating relationships*
+
+Confirm that the Movie Graph is gone
+------------------------------------
 
 ``cypher``:
 
