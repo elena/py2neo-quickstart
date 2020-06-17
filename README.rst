@@ -166,15 +166,11 @@ For example, the following are all functionally **equivalent**:
 
 .. code-block:: python
 
-    my_graph = Graph()
+    my_graph0 = Graph()
+    my_graph1 = Graph(host="localhost")
+    my_graph2 = Graph("bolt://localhost:7687")
 
-.. code-block:: python
-
-    my_graph = Graph(host="localhost")
-
-.. code-block:: python
-
-    my_graph = Graph("bolt://localhost:7687")
+    my_graph0 == my_graph1 == my_graph2
 
 
 See the reference here: https://py2neo.org/v5/database.html#py2neo.database.Graph
@@ -203,6 +199,8 @@ Step 1: Create ``Node`` and ``Relationship`` Subgraphs using Py2Neo
 -------------------------------------------------------------------
 
 Full ``Node`` and ``Relationship`` reference: https://py2neo.org/v5/data.html
+
+``python``:
 
 .. code-block:: python
 
@@ -241,6 +239,8 @@ They need to committed to the database.
 
 Step 2: Commit using Py2Neo
 ---------------------------
+
+``python``:
 
 .. code-block:: python
 
@@ -281,7 +281,7 @@ Find
     Example queries for finding individual nodes.
 
 
-First thing: connect to the database:
+Connect to the database:
 
 .. code-block:: python
 
@@ -289,13 +289,10 @@ First thing: connect to the database:
     graph = Graph(password='[yoursekretpasswordhere]')
 
 
-
 There are **multiple methods** of instantiating ``NodeMatcher``.
 
 .. code-block:: python
 
-   from py2neo import Graph
-   graph = Graph(password='[yoursekretpasswordhere]')
    nodes_matcher = NodeMatcher(graph)
    nodes_matcher.match()
 
@@ -312,15 +309,7 @@ Quick demo:
 
 .. code-block:: python
 
-    from py2neo import Graph
-    from py2neo.matching import NodeMatcher
-
-    my_graph = Graph(password='[yoursekretpasswordhere]')
-    nodes = NodeMatcher(my_graph)
-    keanu = nodes.match("Person", name="Keanu Reeves").first()
-    keanu
-
-.. code-block::
+    keanu = graph nodes.match("Person", name="Keanu Reeves").first()
 
     Out[]: Node('Person', born=1964, name='Keanu Reeves')
 
@@ -331,8 +320,6 @@ Quick demo:
     match_using_graphnodes = graph.nodes.match(name="Keanu Reeves").first()
 
     match_using_matcher == match_using_graphnodes
-
-.. code-block::
 
     Out[]: True
 
@@ -348,8 +335,6 @@ Demo from https://py2neo.org/v5/database.html#py2neo.database.Graph.nodes:
 
     keanu0 == keanu1 == keanu2
 
-.. code-block::
-
     Out[]: True
 
 
@@ -357,9 +342,15 @@ Demo from https://py2neo.org/v5/database.html#py2neo.database.Graph.nodes:
 
     len(graph.nodes.match("Person"))
 
-.. code-block::
-
     Out[]: 145
+
+
+Note, the full set of data has been loaded, you can see this:
+
+* https://github.com/elena/py2neo-quickstart/blob/main/py2neo-movie-graph-data.ipynb
+* https://gist.github.com/elena/733275bd55fba0a48cd885fe0427e5d4
+* https://neo4j.com/developer/movie-database/
+
 
 ---
 
@@ -377,8 +368,6 @@ Find the actor named "Tom Hanks"...
 .. code-block:: python
 
     node_matcher.match(name="Tom Hanks").first()
-
-.. code-block::
 
     Out[]: Node('Person', born=1956, name='Tom Hanks')
 
@@ -407,8 +396,6 @@ Find the movie with title "Cloud Atlas"...
 
     node_matcher.match(title="Cloud Atlas").first()
 
-.. code-block::
-
     Out[]: Node('Movie', released=2012, tagline='Everything is connected', title='Cloud Atlas')
 
 
@@ -427,19 +414,16 @@ Find 10 people...
 
     node_matcher.match("Person").limit(10).all()
 
-
-.. code-block::
-
-  Out[]: [Node('Person', born=1964, name='Keanu Reeves'),
-          Node('Person', born=1967, name='Carrie-Anne Moss'),
-          Node('Person', born=1961, name='Laurence Fishburne'),
-          Node('Person', born=1960, name='Hugo Weaving'),
-          Node('Person', born=1967, name='Lilly Wachowski'),
-          Node('Person', born=1965, name='Lana Wachowski'),
-          Node('Person', born=1952, name='Joel Silver'),
-          Node('Person', born=1978, name='Emil Eifrem'),
-          Node('Person', born=1964, name='Keanu Reeves'),
-          Node('Person', born=1967, name='Carrie-Anne Moss')]
+    Out[]: [Node('Person', born=1964, name='Keanu Reeves'),
+            Node('Person', born=1967, name='Carrie-Anne Moss'),
+            Node('Person', born=1961, name='Laurence Fishburne'),
+            Node('Person', born=1960, name='Hugo Weaving'),
+            Node('Person', born=1967, name='Lilly Wachowski'),
+            Node('Person', born=1965, name='Lana Wachowski'),
+            Node('Person', born=1952, name='Joel Silver'),
+            Node('Person', born=1978, name='Emil Eifrem'),
+            Node('Person', born=1964, name='Keanu Reeves'),
+            Node('Person', born=1967, name='Carrie-Anne Moss')]
 
 
 Note: don't forget the **``.all()``**. Without it you get a ``NodeMatch``
@@ -464,8 +448,6 @@ See the full list here: https://py2neo.org/v5/matching.html#node-matching
 .. code-block:: python
 
     node_matcher.match("Movie").where('_.released >= 1990', '_.released < 2000')
-
-.. code-block::
 
     Out[] = [Node('Movie', released=1999, tagline='Welcome to the Real World', title='The Matrix'),
              Node('Movie', released=1992, tagline="In the heart of the nation's capital, in a courthouse of the U.S. government, one man will stop at nothing to keep his honor, and one will stop at nothing to find the truth.", title='A Few Good Men'),
@@ -492,12 +474,17 @@ Query
   3. What other relationships exist?
 
 
-There are **multiple methods** of instantiating ``RelationshipMatcher``.
+Connect to the database:
 
 .. code-block:: python
 
-   from py2neo import Graph, RelationshipMatcher
-   graph = Graph(password='[yoursekretpasswordhere]')
+    from py2neo import Graph
+    graph = Graph(password='[yoursekretpasswordhere]')
+
+
+There are **multiple methods** of instantiating ``RelationshipMatcher``.
+
+.. code-block:: python
 
    relationship_matcher = RelationshipMatcher(graph)
    relationship_matcher.match()
@@ -526,11 +513,8 @@ List all Tom Hanks movies...
 
 .. code-block:: python
 
-   graph.nodes.match(name="Tom Hanks").first()
-   graph.match(nodes=[tom], r_type="ACTED_IN").all()
-
-
-.. code-block::
+    graph.nodes.match(name="Tom Hanks").first()
+    graph.match(nodes=[tom], r_type="ACTED_IN").all()
 
     Out[]: [ACTED_IN(Node('Person', born=1956, name='Tom Hanks'), Node('Movie', released=2006, tagline='Break The Codes', title='The Da Vinci Code'), roles=['Dr. Robert Langdon']),
             ACTED_IN(Node('Person', born=1956, name='Tom Hanks'), Node('Movie', released=1990, tagline='A story of love, lava and burning desire.', title='Joe Versus the Volcano'), roles=['Joe Banks']),
@@ -556,10 +540,8 @@ This is possible, but getting out of the scope of ``py2neo``, the following are 
 
 .. code-block:: python
 
-   results = graph.run('MATCH (cloudAtlas {title: "Cloud Atlas"})<-[:DIRECTED]-(directors) RETURN directors.name')
-   results.data()
-
-.. code-block::
+    results = graph.run('MATCH (cloudAtlas {title: "Cloud Atlas"})<-[:DIRECTED]-(directors) RETURN directors.name')
+    results.data()
 
     Out[]: [{'directors.name': 'Tom Tykwer'},
             {'directors.name': 'Lilly Wachowski'},
@@ -605,10 +587,8 @@ Tom Hanks' co-actors...
 
 .. code-block:: python
 
-   results = graph.run('MATCH (tom:Person {name:"Tom Hanks"})-[:ACTED_IN]->(m)<-[:ACTED_IN]-(coActors) RETURN coActors.name')
-   results.data()
-
-.. code-block::
+    results = graph.run('MATCH (tom:Person {name:"Tom Hanks"})-[:ACTED_IN]->(m)<-[:ACTED_IN]-(coActors) RETURN coActors.name')
+    results.data()
 
     Out[]: [{'coActors.name': 'Bill Paxton'},
             {'coActors.name': 'Madonna'},
@@ -635,10 +615,8 @@ Tom Hanks' co-actors...
 
 .. code-block:: python
 
-   results = graph.run('MATCH (people:Person)-[relatedTo]-(:Movie {title: "Cloud Atlas"}) RETURN people.name, Type(relatedTo), relatedTo')
-   results.data()
-
-.. code-block::
+    results = graph.run('MATCH (people:Person)-[relatedTo]-(:Movie {title: "Cloud Atlas"}) RETURN people.name, Type(relatedTo), relatedTo')
+    results.data()
 
     Out[]: [{'people.name': 'Halle Berry',
              'Type(relatedTo)': 'ACTED_IN',
@@ -700,7 +678,7 @@ Other possible completions are:
     # sympy
     results.to_matrix()
 
-     # numpy
+    # numpy
     results.to_ndarray()
 
 
@@ -732,10 +710,8 @@ Movies and actors up to 4 "hops" away from Kevin Bacon
 
 .. code-block:: python
 
-   results = graph.run('MATCH (bacon:Person {name:"Kevin Bacon"})-[*1..4]-(hollywood) RETURN DISTINCT hollywood')
-   results.data()
-
-.. code-block::
+    results = graph.run('MATCH (bacon:Person {name:"Kevin Bacon"})-[*1..4]-(hollywood) RETURN DISTINCT hollywood')
+    results.data()
 
     Out[]: [{'hollywood': Node('Person', born=1971, name='Paul Bettany')},
             {'hollywood': Node('Person', born=1956, name='Tom Hanks')},
@@ -775,10 +751,8 @@ Bacon path, the shortest path of any relationships to Meg Ryan
 
 .. code-block:: python
 
-   results = graph.run('MATCH p=shortestPath((bacon:Person {name:"Kevin Bacon"})-[*]-(meg:Person {name:"Meg Ryan"})) RETURN p')
-   results.data()
-
-.. code-block::
+    results = graph.run('MATCH p=shortestPath((bacon:Person {name:"Kevin Bacon"})-[*]-(meg:Person {name:"Meg Ryan"})) RETURN p')
+    results.data()
 
     Out[]: [{'p': Path(subgraph=Subgraph({Node('Person', born=1958, name='Kevin Bacon'), Node('Movie', released=1992, tagline="In the heart of the
            nation's capital, in a courthouse of the U.S. government, one man will stop at nothing to keep his honor, and one will stop at nothing
@@ -839,10 +813,8 @@ Extend Tom Hanks co-actors, to find co-co-actors who haven't worked with Tom Han
 
 .. code-block:: python
 
-   results = graph.run('MATCH (tom:Person {name:"Tom Hanks"})-[:ACTED_IN]->(m)<-[:ACTED_IN]-(coActors), (coActors)-[:ACTED_IN]->(m2)<-[:ACTED_IN]-(cocoActors) WHERE NOT (tom)-[:ACTED_IN]->()<-[:ACTED_IN]-(cocoActors) AND tom <> cocoActors RETURN cocoActors.name AS Recommended, count(*) AS Strength ORDER BY Strength DESC')
-   results.data()
-
-.. code-block::
+    results = graph.run('MATCH (tom:Person {name:"Tom Hanks"})-[:ACTED_IN]->(m)<-[:ACTED_IN]-(coActors), (coActors)-[:ACTED_IN]->(m2)<-[:ACTED_IN]-(cocoActors) WHERE NOT (tom)-[:ACTED_IN]->()<-[:ACTED_IN]-(cocoActors) AND tom <> cocoActors RETURN cocoActors.name AS Recommended, count(*) AS Strength ORDER BY Strength DESC')
+    results.data()
 
     Out[]: [{'Recommended': 'Tom Cruise', 'Strength': 5},
             {'Recommended': 'Cuba Gooding Jr.', 'Strength': 4},
@@ -877,10 +849,8 @@ Find someone to introduce Tom Hanks to Tom Cruise
 
 .. code-block:: python
 
-   results = graph.run('MATCH (tom:Person {name:"Tom Hanks"})-[:ACTED_IN]->(m)<-[:ACTED_IN]-(coActors), (coActors)-[:ACTED_IN]->(m2)<-[:ACTED_IN]-(cruise:Person {name:"Tom Cruise"}) RETURN tom, m, coActors, m2, cruise')
-   results.data()
-
-.. code-block::
+    results = graph.run('MATCH (tom:Person {name:"Tom Hanks"})-[:ACTED_IN]->(m)<-[:ACTED_IN]-(coActors), (coActors)-[:ACTED_IN]->(m2)<-[:ACTED_IN]-(cruise:Person {name:"Tom Cruise"}) RETURN tom, m, coActors, m2, cruise')
+    results.data()
 
     Out[]: [{'tom': Node('Person', born=1956, name='Tom Hanks'),
              'm': Node('Movie', released=1990, tagline='A story of love, lava and burning desire.', title='Joe Versus the Volcano'),
@@ -942,9 +912,9 @@ Delete all Movie and Person nodes, and their relationships
    graph = Graph(password='[yoursekretpasswordhere]')
    len(graph.match())
 
-.. code-block::
-
    Out[]: 253
+
+https://py2neo.org/v5/database.html#py2neo.database.Transaction.delete
 
 .. code-block:: python
 
@@ -952,10 +922,7 @@ Delete all Movie and Person nodes, and their relationships
 
    graph.delete_all()
 
-
-https://py2neo.org/v5/database.html#py2neo.database.Transaction.delete
-
-*Note: you only need to compare property values like this when first creating relationships*
+---
 
 Confirm that the Movie Graph is gone
 ------------------------------------
@@ -966,19 +933,17 @@ Confirm that the Movie Graph is gone
 
    MATCH (n) RETURN n
 
+``python``:
+
 .. code-block:: python
 
    len(graph.match())
-
-.. code-block::
 
    Out[]: 0
 
 .. code-block:: python
 
-   list(graph.match())
-
-.. code-block::
+   graph.match().all()
 
    Out[]: []
 
