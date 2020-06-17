@@ -87,7 +87,6 @@ All code examples presented are also here:
 
 ---
 
-
 .. contents::
 
 
@@ -294,6 +293,8 @@ There are **multiple methods** of instantiating ``NodeMatcher``.
 
 .. code-block:: python
 
+   from py2neo import Graph
+   graph = Graph(password='[yoursekretpasswordhere]')
    nodes_matcher = NodeMatcher(graph)
    nodes_matcher.match()
 
@@ -361,8 +362,8 @@ Demo from `docs<https://py2neo.org/v5/database.html#py2neo.database.Graph.nodes>
 
 ---
 
-**Find the actor named "Tom Hanks"...**
-=======================================
+Find the actor named "Tom Hanks"...
+```````````````````````````````````
 
 ``cypher``:
 
@@ -390,8 +391,8 @@ rule it's better to be specific in queries (in this case using the label
 "Person" would assist performance).
 
 
-**Find the movie with title "Cloud Atlas"...**
-==============================================
+Find the movie with title "Cloud Atlas"...
+``````````````````````````````````````````
 
 ``cypher``:
 
@@ -410,9 +411,8 @@ rule it's better to be specific in queries (in this case using the label
     Out[]: Node('Movie', released=2012, tagline='Everything is connected', title='Cloud Atlas')
 
 
-
-**Find 10 people...**
-=====================
+Find 10 people...
+`````````````````
 
 ``cypher``:
 
@@ -446,8 +446,8 @@ object, which is probably not what you want.
 
 
 
-**Find movies released in the 1990s...**
-========================================
+Find movies released in the 1990s...
+````````````````````````````````````
 
 ``cypher``:
 
@@ -484,43 +484,36 @@ https://py2neo.org/v5/matching.html#py2neo.matching.NodeMatch.where
 Query
 +++++
 
-Finding patterns within the graph.
+  Finding patterns within the graph.
 
-1. Actors are people who acted in movies
-2. Directors are people who directed a movie
-3. What other relationships exist?
+  1. Actors are people who acted in movies
+  2. Directors are people who directed a movie
+  3. What other relationships exist?
 
-.. code-block:: python
-
-    from py2neo import Graph, RelationshipMatcher
-    graph = Graph(password='[yoursekretpasswordhere]')
 
 There are **multiple methods** of instantiating ``RelationshipMatcher``.
 
 .. code-block:: python
 
-   >>> relationship_matcher = RelationshipMatcher(graph)
-   >>> relationship_matcher.match()
+   from py2neo import Graph, RelationshipMatcher
+   graph = Graph(password='[yoursekretpasswordhere]')
 
-https://py2neo.org/v4/matching.html#py2neo.matching.RelationshipMatch
+   relationship_matcher = RelationshipMatcher(graph)
+   relationship_matcher.match()
 
-This is **the same as**:
+   # this is the same as:
 
-.. code-block:: python
+   graph.relationships.match()
 
-   >>> graph.relationships.match()
 
-This is **also the same as**:
+https://py2neo.org/v5/matching.html#py2neo.matching.RelationshipMatch
+https://py2neo.org/v5/database.html#py2neo.database.Graph.match
 
-.. code-block:: python
-
-   >>> graph.match()
-
-https://py2neo.org/v4/database.html#py2neo.database.Graph.match
 
 ---
 
-| **List all Tom Hanks movies...**
+List all Tom Hanks movies...
+````````````````````````````
 
 ``cypher``:
 
@@ -532,24 +525,23 @@ https://py2neo.org/v4/database.html#py2neo.database.Graph.match
 
 .. code-block:: python
 
-   >>> tom = graph.nodes.match(name="Tom Hanks").first()
-   >>> tomHanksMovies = graph.match(nodes=[tom], r_type="ACTED_IN")
-   >>> print(list(tomHanksMovies))
-   [(Tom Hanks)-[:ACTED_IN {roles: ['Jimmy Dugan']}]->(_181),
-    (Tom Hanks)-[:ACTED_IN {roles: ['Rep. Charlie Wilson']}]->(_169),
-    (Tom Hanks)-[:ACTED_IN {roles: ['Hero Boy', 'Father', 'Conductor', 'Hobo', 'Scrooge', 'Santa Claus']}]->(_180),
-    (Tom Hanks)-[:ACTED_IN {roles: ['Chuck Noland']}]->(_160),
-    ...
-    (Tom Hanks)-[:ACTED_IN {roles: ['Zachry', 'Dr. Henry Goose', 'Isaac Sachs', 'Dermot Hoggins']}]->(_105),
-    (Tom Hanks)-[:ACTED_IN {roles: ['Mr. White']}]->(_85),
-    (Tom Hanks)-[:ACTED_IN {roles: ['Joe Banks']}]->(_76),
-    (Tom Hanks)-[:ACTED_IN {roles: ['Joe Fox']}]->(_65)]
-
-    # This is the same as
-    >>> tomHanksMovies = graph.relationships.match(nodes=[tom], r_type="ACTED_IN")
+   graph.nodes.match(name="Tom Hanks").first()
+   graph.match(nodes=[tom], r_type="ACTED_IN").all()
 
 
-| **Who directed "Cloud Atlas"?**
+.. code-block::
+
+    Out[]: [ACTED_IN(Node('Person', born=1956, name='Tom Hanks'), Node('Movie', released=2006, tagline='Break The Codes', title='The Da Vinci Code'), roles=['Dr. Robert Langdon']),
+            ACTED_IN(Node('Person', born=1956, name='Tom Hanks'), Node('Movie', released=1990, tagline='A story of love, lava and burning desire.', title='Joe Versus the Volcano'), roles=['Joe Banks']),
+            ACTED_IN(Node('Person', born=1956, name='Tom Hanks'), Node('Movie', released=1999, tagline="Walk a mile you'll never forget.", title='The Green Mile'), roles=['Paul Edgecomb']),
+            ...
+            ACTED_IN(Node('Person', born=1956, name='Tom Hanks'), Node('Movie', released=2012, tagline='Everything is connected', title='Cloud Atlas'), roles=['Zachry', 'Dr. Henry Goose', 'Isaac Sachs', 'Dermot Hoggins']),
+            ACTED_IN(Node('Person', born=1956, name='Tom Hanks'), Node('Movie', released=2004, tagline='This Holiday Season… Believe', title='The Polar Express'), roles=['Hero Boy', 'Father', 'Conductor', 'Hobo', 'Scrooge', 'Santa Claus']),
+            ACTED_IN(Node('Person', born=1956, name='Tom Hanks'), Node('Movie', released=1996, tagline='In every life there comes a time when that thing you dream becomes that thing you do', title='That Thing You Do'), roles=['Mr. White'])]
+
+
+Who directed "Cloud Atlas"?
+```````````````````````````
 
 ``cypher``:
 
@@ -563,11 +555,14 @@ This is possible, but getting out of the scope of ``py2neo``, the following are 
 
 .. code-block:: python
 
-    >>> results = graph.run('MATCH (cloudAtlas {title: "Cloud Atlas"})<-[:DIRECTED]-(directors) RETURN directors.name')
-    >>> results.data()
-    [{'directors.name': 'Tom Tykwer'},
-     {'directors.name': 'Lilly Wachowski'},
-     {'directors.name': 'Lana Wachowski'}]
+   results = graph.run('MATCH (cloudAtlas {title: "Cloud Atlas"})<-[:DIRECTED]-(directors) RETURN directors.name')
+   results.data()
+
+.. code-block::
+
+    Out[]: [{'directors.name': 'Tom Tykwer'},
+            {'directors.name': 'Lilly Wachowski'},
+            {'directors.name': 'Lana Wachowski'}]
 
 The following will produce the same result, although is less elegant:
 
@@ -575,10 +570,13 @@ The following will produce the same result, although is less elegant:
 
 .. code-block:: python
 
-    >>> cloudAtlas = matcher.match(title="Cloud Atlas").first()
-    >>> directors = graph.match(r_type="DIRECTED", nodes=(None, cloudAtlas)) # << see notes about use of nodes=() here
-    >>> for director in directors:
-    >>>     print(director.nodes[0]['name'])
+    cloudAtlas = matcher.match(title="Cloud Atlas").first()
+    directors = graph.match(r_type="DIRECTED", nodes=(None, cloudAtlas)) # << see notes about use of nodes=() here
+    for director in directors:
+         print(director.nodes[0]['name'])
+
+.. code-block::
+
     Tom Tykwer
     Lilly Wachowski
     Lana Wachowski
@@ -589,10 +587,12 @@ There are several important things to note here:
 - ``r_type`` is a kwarg to ``.match()``
 - ``nodes`` is a **set**, of: ``(NodeTo, NodeFrom)`` -- in this case, the "from" Node is ``None``, because that's the undefined data that we want to find.
 
-In the ``tomHanksMovies`` example above only one of the ``nodes`` set is defined because we're being looser with our requirements. For this kwarg the correct number of inputs in the set is *one* or *two*, in a particular order.
+In the "List all Tom Hanks movies..." example above only one of the ``nodes`` set is defined -- we were less e
+xplicit with our requirements. For this kwarg the correct number of inputs in the set is *one* or *two*, in a **particular order**.
 
 
-| **Tom Hanks' co-actors...**
+Tom Hanks' co-actors...
+```````````````````````
 
 ``cypher``:
 
@@ -604,21 +604,22 @@ In the ``tomHanksMovies`` example above only one of the ``nodes`` set is defined
 
 .. code-block:: python
 
-    >>> results = graph.run('MATCH (tom:Person {name:"Tom Hanks"})-[:ACTED_IN]->(m)<-[:ACTED_IN]-(coActors) RETURN coActors.name')
-    >>> results.data()
-     [{'coActors.name': 'Bill Paxton'},
-      {'coActors.name': 'Madonna'},
-      {'coActors.name': 'Geena Davis'},
-      {'coActors.name': "Rosie O'Donnell"},
-      {'coActors.name': 'Lori Petty'},
-      {'coActors.name': 'Philip Seymour Hoffman'},
-      ...
-      {'coActors.name': 'Meg Ryan'},
-      {'coActors.name': 'Steve Zahn'},
-      {'coActors.name': 'Parker Posey'},
-      {'coActors.name': 'Dave Chappelle'},
-      {'coActors.name': 'Greg Kinnear'},
-      {'coActors.name': 'Meg Ryan'}]
+   results = graph.run('MATCH (tom:Person {name:"Tom Hanks"})-[:ACTED_IN]->(m)<-[:ACTED_IN]-(coActors) RETURN coActors.name')
+   results.data()
+
+.. code-block::
+
+    Out[]: [{'coActors.name': 'Bill Paxton'},
+            {'coActors.name': 'Madonna'},
+            {'coActors.name': 'Geena Davis'},
+            {'coActors.name': 'Lori Petty'},
+            {'coActors.name': 'Philip Seymour Hoffman'},
+            ...
+            {'coActors.name': 'Meg Ryan'},
+            {'coActors.name': 'Parker Posey'},
+            {'coActors.name': 'Dave Chappelle'},
+            {'coActors.name': 'Greg Kinnear'},
+            {'coActors.name': 'Meg Ryan'}]
 
 
 | **How people are related to "Cloud Atlas"...**
@@ -633,18 +634,38 @@ In the ``tomHanksMovies`` example above only one of the ``nodes`` set is defined
 
 .. code-block:: python
 
-   >>> results = graph.run('MATCH (people:Person)-[relatedTo]-(:Movie {title: "Cloud Atlas"}) RETURN people.name, Type(relatedTo), relatedTo')
-   >>> results.data()
-   [<Record people.name='Jessica Thompson' Type(relatedTo)='REVIEWED' relatedTo=(Jessica Thompson)-[:REVIEWED {rating: 95, summary: 'An amazing journey'}]->(_105)>,
-    <Record people.name='Stefan Arndt' Type(relatedTo)='PRODUCED' relatedTo=(Stefan Arndt)-[:PRODUCED {}]->(_105)>,
-    <Record people.name='Tom Tykwer' Type(relatedTo)='DIRECTED' relatedTo=(Tom Tykwer)-[:DIRECTED {}]->(_105)>,
-    <Record people.name='Lilly Wachowski' Type(relatedTo)='DIRECTED' relatedTo=(Lilly Wachowski)-[:DIRECTED {}]->(_105)>,
-    <Record people.name='Lana Wachowski' Type(relatedTo)='DIRECTED' relatedTo=(Lana Wachowski)-[:DIRECTED {}]->(_105)>,
-    <Record people.name='David Mitchell' Type(relatedTo)='WROTE' relatedTo=(David Mitchell)-[:WROTE {}]->(_105)>,
-    <Record people.name='Jim Broadbent' Type(relatedTo)='ACTED_IN' relatedTo=(Jim Broadbent)-[:ACTED_IN {roles: ['Vyvyan Ayrs', 'Captain Molyneux', 'Timothy Cavendish']}]->(_105)>,
-    <Record people.name='Hugo Weaving' Type(relatedTo)='ACTED_IN' relatedTo=(Hugo Weaving)-[:ACTED_IN {roles: ['Bill Smoke', 'Haskell Moore', 'Tadeusz Kesselring', 'Nurse Noakes', 'Boardman Mephi', 'Old Georgie']}]->(_105)>,
-    <Record people.name='Halle Berry' Type(relatedTo)='ACTED_IN' relatedTo=(Halle Berry)-[:ACTED_IN {roles: ['Luisa Rey', 'Jocasta Ayrs', 'Ovid', 'Meronym']}]->(_105)>,
-    <Record people.name='Tom Hanks' Type(relatedTo)='ACTED_IN' relatedTo=(Tom Hanks)-[:ACTED_IN {roles: ['Zachry', 'Dr. Henry Goose', 'Isaac Sachs', 'Dermot Hoggins']}]->(_105)>]
+   results = graph.run('MATCH (people:Person)-[relatedTo]-(:Movie {title: "Cloud Atlas"}) RETURN people.name, Type(relatedTo), relatedTo')
+   results.data()
+
+.. code-block::
+
+    Out[]: [{'people.name': 'Halle Berry',
+             'Type(relatedTo)': 'ACTED_IN',
+             'relatedTo': ACTED_IN(Node('Person', born=1966, name='Halle Berry'), Node('Movie', released=2012, tagline='Everything is connected', title='Cloud Atlas'), roles=['Luisa Rey', 'Jocasta Ayrs', 'Ovid', 'Meronym'])},
+            {'people.name': 'Stefan Arndt',
+             'Type(relatedTo)': 'PRODUCED',
+             'relatedTo': PRODUCED(Node('Person', born=1961, name='Stefan Arndt'), Node('Movie', released=2012, tagline='Everything is connected', title='Cloud Atlas'))},
+            {'people.name': 'Hugo Weaving',
+             'Type(relatedTo)': 'ACTED_IN',
+             'relatedTo': ACTED_IN(Node('Person', born=1960, name='Hugo Weaving'), Node('Movie', released=2012, tagline='Everything is connected', title='Cloud Atlas'), roles=['Bill Smoke', 'Haskell Moore', 'Tadeusz Kesselring', 'Nurse Noakes', 'Boardman Mephi', 'Old Georgie'])},
+            {'people.name': 'Lilly Wachowski',
+             'Type(relatedTo)': 'DIRECTED',
+             'relatedTo': DIRECTED(Node('Person', born=1967, name='Lilly Wachowski'), Node('Movie', released=2012, tagline='Everything is connected', title='Cloud Atlas'))},
+            {'people.name': 'Tom Tykwer',
+             'Type(relatedTo)': 'DIRECTED',
+             'relatedTo': DIRECTED(Node('Person', born=1965, name='Tom Tykwer'), Node('Movie', released=2012, tagline='Everything is connected', title='Cloud Atlas'))},
+            {'people.name': 'Tom Hanks',
+             'Type(relatedTo)': 'ACTED_IN',
+             'relatedTo': ACTED_IN(Node('Person', born=1956, name='Tom Hanks'), Node('Movie', released=2012, tagline='Everything is connected', title='Cloud Atlas'), roles=['Zachry', 'Dr. Henry Goose', 'Isaac Sachs', 'Dermot Hoggins'])},
+            {'people.name': 'Jim Broadbent',
+             'Type(relatedTo)': 'ACTED_IN',
+             'relatedTo': ACTED_IN(Node('Person', born=1949, name='Jim Broadbent'), Node('Movie', released=2012, tagline='Everything is connected', title='Cloud Atlas'), roles=['Vyvyan Ayrs', 'Captain Molyneux', 'Timothy Cavendish'])},
+            {'people.name': 'Lana Wachowski',
+             'Type(relatedTo)': 'DIRECTED',
+             'relatedTo': DIRECTED(Node('Person', born=1965, name='Lana Wachowski'), Node('Movie', released=2012, tagline='Everything is connected', title='Cloud Atlas'))},
+            {'people.name': 'David Mitchell',
+             'Type(relatedTo)': 'WROTE',
+             'relatedTo': WROTE(Node('Person', born=1969, name='David Mitchell'), Node('Movie', released=2012, tagline='Everything is connected', title='Cloud Atlas'))}]
 
 
 ``Python`` has strengths far beyond ``cypher``, though ``cypher`` is also magically strong, so we're not too fussed by dropping back to native ``cypher`` here. We get the best of both worlds.
@@ -654,18 +675,18 @@ For example:
 .. code-block:: python
 
     >>> results.to_table()
-    people.name      | Type(relatedTo) | relatedTo
-    ------------------|-----------------|---------------------------------------------------------------------------------------------------------------------------------------------------
-    Jessica Thompson | REVIEWED        | (Jessica Thompson)-[:REVIEWED {rating: 95, summary: 'An amazing journey'}]->(_94)
-    Lilly Wachowski  | DIRECTED        | (Lilly Wachowski)-[:DIRECTED {}]->(_94)
-    Lana Wachowski   | DIRECTED        | (Lana Wachowski)-[:DIRECTED {}]->(_94)
-    Jim Broadbent    | ACTED_IN        | (Jim Broadbent)-[:ACTED_IN {roles: ['Vyvyan Ayrs', 'Captain Molyneux', 'Timothy Cavendish']}]->(_94)
-    Tom Tykwer       | DIRECTED        | (Tom Tykwer)-[:DIRECTED {}]->(_94)
-    Hugo Weaving     | ACTED_IN        | (Hugo Weaving)-[:ACTED_IN {roles: ['Bill Smoke', 'Haskell Moore', 'Tadeusz Kesselring', 'Nurse Noakes', 'Boardman Mephi', 'Old Georgie']}]->(_94)
-    Halle Berry      | ACTED_IN        | (Halle Berry)-[:ACTED_IN {roles: ['Luisa Rey', 'Jocasta Ayrs', 'Ovid', 'Meronym']}]->(_94)
-    Tom Hanks        | ACTED_IN        | (Tom Hanks)-[:ACTED_IN {roles: ['Zachry', 'Dr. Henry Goose', 'Isaac Sachs', 'Dermot Hoggins']}]->(_94)
-    David Mitchell   | WROTE           | (David Mitchell)-[:WROTE {}]->(_94)
-    Stefan Arndt     | PRODUCED        | (Stefan Arndt)-[:PRODUCED {}]->(_94)
+     people.name     | Type(relatedTo) | relatedTo
+    -----------------|-----------------|---------------------------------------------------------------------------------------------------------------------------------------------------
+     Halle Berry     | ACTED_IN        | (Halle Berry)-[:ACTED_IN {roles: ['Luisa Rey', 'Jocasta Ayrs', 'Ovid', 'Meronym']}]->(_64)
+     Stefan Arndt    | PRODUCED        | (Stefan Arndt)-[:PRODUCED {}]->(_64)
+     Hugo Weaving    | ACTED_IN        | (Hugo Weaving)-[:ACTED_IN {roles: ['Bill Smoke', 'Haskell Moore', 'Tadeusz Kesselring', 'Nurse Noakes', 'Boardman Mephi', 'Old Georgie']}]->(_64)
+     Lilly Wachowski | DIRECTED        | (Lilly Wachowski)-[:DIRECTED {}]->(_64)
+     Tom Tykwer      | DIRECTED        | (Tom Tykwer)-[:DIRECTED {}]->(_64)
+     Tom Hanks       | ACTED_IN        | (Tom Hanks)-[:ACTED_IN {roles: ['Zachry', 'Dr. Henry Goose', 'Isaac Sachs', 'Dermot Hoggins']}]->(_64)
+     Jim Broadbent   | ACTED_IN        | (Jim Broadbent)-[:ACTED_IN {roles: ['Vyvyan Ayrs', 'Captain Molyneux', 'Timothy Cavendish']}]->(_64)
+     Lana Wachowski  | DIRECTED        | (Lana Wachowski)-[:DIRECTED {}]->(_64)
+     David Mitchell  | WROTE           | (David Mitchell)-[:WROTE {}]->(_64)
+
 
 Other possible completions are:
 
@@ -690,12 +711,14 @@ Solve
 +++++
 
 
-You've heard of the classic "Six Degrees of Kevin Bacon"? That is simply a shortest path query called the "Bacon Path".
+    You've heard of the classic "Six Degrees of Kevin Bacon"? That is simply a shortest path query called the "Bacon Path".
 
-1. Variable length patterns
-2. Built-in shortestPath() algorithm
+    1. Variable length patterns
+    2. Built-in shortestPath() algorithm
 
-| **Movies and actors up to 4 "hops" away from Kevin Bacon**
+
+Movies and actors up to 4 "hops" away from Kevin Bacon
+``````````````````````````````````````````````````````
 
 ``cypher``:
 
@@ -708,13 +731,35 @@ You've heard of the classic "Six Degrees of Kevin Bacon"? That is simply a short
 
 .. code-block:: python
 
-    >>> results = graph.run('MATCH (bacon:Person {name:"Kevin Bacon"})-[*1..4]-(hollywood) RETURN DISTINCT hollywood')
-    >>> results.data()
-    [<Record hollywood=(_149:Person {born: 1969, name: 'Michael Sheen'})>, ... <Record hollywood=(_29:Person {born: 1959, name: 'Val Kilmer'})>, <Record hollywood=(_28:Person {born: 1957, name: 'Kelly McGillis'})>, <Record hollywood=(_27:Movie {released: 1986, tagline: 'I feel the need, the need for speed.', title: 'Top Gun'})>]
-    >>> len(results.data())
-    135
+   results = graph.run('MATCH (bacon:Person {name:"Kevin Bacon"})-[*1..4]-(hollywood) RETURN DISTINCT hollywood')
+   results.data()
 
-| **Bacon path, the shortest path of any relationships to Meg Ryan**
+.. code-block::
+
+    Out[]: [{'hollywood': Node('Person', born=1971, name='Paul Bettany')},
+            {'hollywood': Node('Person', born=1956, name='Tom Hanks')},
+            {'hollywood': Node('Person', born=1976, name='Audrey Tautou')},
+            {'hollywood': Node('Person', born=1939, name='Ian McKellen')},
+            ...
+            {'hollywood': Node('Movie', released=2006, tagline='Break The Codes', title='The Da Vinci Code')},
+            {'hollywood': Node('Person', born=1977, name='Liv Tyler')},
+            {'hollywood': Node('Movie', released=1996, tagline='In every life there comes a time when that thing you dream becomes that thing you do', title='That Thing You Do')}]
+
+
+Note that this return a lot of results:
+
+.. code-block:: python
+
+   results = graph.run('MATCH (bacon:Person {name:"Kevin Bacon"})-[*1..4]-(hollywood) RETURN DISTINCT hollywood')
+   len(results.data())
+
+.. code-block::
+
+    Out[]: 133
+
+
+Bacon path, the shortest path of any relationships to Meg Ryan
+``````````````````````````````````````````````````````````````
 
 ``cypher``:
 
@@ -729,13 +774,36 @@ You've heard of the classic "Six Degrees of Kevin Bacon"? That is simply a short
 
 .. code-block:: python
 
-    >>> results = graph.run('MATCH p=shortestPath((bacon:Person {name:"Kevin Bacon"})-[*]-(meg:Person {name:"Meg Ryan"})) RETURN p')
-    >>> results.data()
-    [{'p': (Kevin Bacon)-[:ACTED_IN {roles: ['Jack Swigert']}]->(_154)<-[:ACTED_IN {roles: ['Jim Lovell']}]-(Tom Hanks)-[:ACTED_IN {roles: ['Joe Banks']}]->(_76)<-[:ACTED_IN {roles: ['DeDe', 'Angelica Graynamore', 'Patricia Graynamore']}]-(Meg Ryan)}]
+   results = graph.run('MATCH p=shortestPath((bacon:Person {name:"Kevin Bacon"})-[*]-(meg:Person {name:"Meg Ryan"})) RETURN p')
+   results.data()
+
+.. code-block::
+
+    Out[]: [{'p': Path(subgraph=Subgraph({Node('Person', born=1958, name='Kevin Bacon'), Node('Movie', released=1992, tagline="In the heart of the
+           nation's capital, in a courthouse of the U.S. government, one man will stop at nothing to keep his honor, and one will stop at nothing
+           to find the truth.", title='A Few Good Men'), Node('Person', born=1947, name='Rob Reiner'), Node('Movie', released=1998, tagline='At odds
+           in life... in love on-line.', title='When Harry Met Sally'), Node('Person', born=1961, name='Meg Ryan')}, {ACTED_IN(Node('Person', born=1958,
+           name='Kevin Bacon'), Node('Movie', released=1992, tagline="In the heart of the nation's capital, in a courthouse of the U.S. government, one
+           man will stop at nothing to keep his honor, and one will stop at nothing to find the truth.", title='A Few Good Men'), roles=['Capt. Jack
+           Ross']), DIRECTED(Node('Person', born=1947, name='Rob Reiner'), Node('Movie', released=1992, tagline="In the heart of the nation's capital,
+           in a courthouse of the U.S. government, one man will stop at nothing to keep his honor, and one will stop at nothing to find the truth.",
+           title='A Few Good Men')), PRODUCED(Node('Person', born=1947, name='Rob Reiner'), Node('Movie', released=1998, tagline='At odds in life...
+           in love on-line.', title='When Harry Met Sally')), ACTED_IN(Node('Person', born=1961, name='Meg Ryan'), Node('Movie', released=1998,
+           tagline='At odds in life... in love on-line.', title='When Harry Met Sally'), roles=['Sally Albright'])}), sequence=(Node('Person',born=1958,
+           name='Kevin Bacon'), ACTED_IN(Node('Person', born=1958, name='Kevin Bacon'), Node('Movie', released=1992, tagline="In the heart of the
+           nation's capital, in a courthouse of the U.S. government, one man will stop at nothing to keep his honor, and one will stop at nothing to
+           find the truth.", title='A Few Good Men'), roles=['Capt. Jack Ross']), Node('Movie', released=1992, tagline="In the heart of the nation's
+           capital, in a courthouse of the U.S. government, one man will stop at nothing to keep his honor, and one will stop at nothing to find the
+           truth.", title='A Few Good Men'), DIRECTED(Node('Person', born=1947, name='Rob Reiner'), Node('Movie', released=1992, tagline="In the heart
+           of the nation's capital, in a courthouse of the U.S. government, one man will stop at nothing to keep his honor, and one will stop at
+           nothing to find the truth.", title='A Few Good Men')), Node('Person', born=1947, name='Rob Reiner'), PRODUCED(Node('Person', born=1947,
+           name='Rob Reiner'), Node('Movie', released=1998, tagline='At odds in life... in love on-line.', title='When Harry Met Sally')), Node('Movie',
+           released=1998, tagline='At odds in life... in love on-line.', title='When Harry Met Sally'), ACTED_IN(Node('Person', born=1961, name='Meg
+           Ryan'), Node('Movie', released=1998, tagline='At odds in life... in love on-line.', title='When Harry Met Sally'), roles=['Sally Albright']),
+           Node('Person', born=1961, name='Meg Ryan')))}]
 
 
-
-For more information on shortest path:
+For more about shortest path:
 
 https://neo4j.com/docs/developer-manual/current/cypher/clauses/match/#query-shortest-path
 
@@ -746,14 +814,16 @@ https://neo4j.com/docs/graph-algorithms/current/algorithms/shortest-path/
 Recommend
 +++++++++
 
-Let's recommend new co-actors for Tom Hanks. A basic recommendation approach is to find connections past an immediate neighborhood which are themselves well connected.
+    Let's recommend new co-actors for Tom Hanks. A basic recommendation approach is to find connections past an immediate neighborhood which are themselves well connected.
 
-For Tom Hanks, that means:
+    For Tom Hanks, that means:
 
-1. Find actors that Tom Hanks hasn't yet worked with, but his co-actors have.
-2. Find someone who can introduce Tom to his potential co-actor.
+    1. Find actors that Tom Hanks hasn't yet worked with, but his co-actors have.
+    2. Find someone who can introduce Tom to his potential co-actor.
 
-| **Extend Tom Hanks co-actors, to find co-co-actors who haven't worked with Tom Hanks...**
+
+Extend Tom Hanks co-actors, to find co-co-actors who haven't worked with Tom Hanks...
+`````````````````````````````````````````````````````````````````````````````````````
 
 ``cypher``:
 
@@ -768,35 +838,31 @@ For Tom Hanks, that means:
 
 .. code-block:: python
 
+   results = graph.run('MATCH (tom:Person {name:"Tom Hanks"})-[:ACTED_IN]->(m)<-[:ACTED_IN]-(coActors), (coActors)-[:ACTED_IN]->(m2)<-[:ACTED_IN]-(cocoActors) WHERE NOT (tom)-[:ACTED_IN]->()<-[:ACTED_IN]-(cocoActors) AND tom <> cocoActors RETURN cocoActors.name AS Recommended, count(*) AS Strength ORDER BY Strength DESC')
+   results.data()
 
-    >>> results = graph.run('MATCH (tom:Person {name:"Tom Hanks"})-[:ACTED_IN]->(m)<-[:ACTED_IN]-(coActors), (coActors)-[:ACTED_IN]->(m2)<-[:ACTED_IN]-(cocoActors) WHERE NOT (tom)-[:ACTED_IN]->()<-[:ACTED_IN]-(cocoActors) AND tom <> cocoActors RETURN cocoActors.name AS Recommended, count(*) AS Strength ORDER BY Strength DESC')
-    >>> results.data()
-    [{'Recommended': 'Tom Cruise', 'Strength': 5},
-     {'Recommended': 'Zach Grenier', 'Strength': 5},
-     {'Recommended': 'Cuba Gooding Jr.', 'Strength': 4},
-     {'Recommended': 'Keanu Reeves', 'Strength': 4},
-     {'Recommended': 'Carrie Fisher', 'Strength': 3},
-     {'Recommended': 'Carrie-Anne Moss', 'Strength': 3},
-     {'Recommended': 'Kelly McGillis', 'Strength': 3},
-     {'Recommended': 'Val Kilmer', 'Strength': 3},
-     {'Recommended': 'Anthony Edwards', 'Strength': 3},
-     {'Recommended': 'Laurence Fishburne', 'Strength': 3},
-     {'Recommended': 'Jack Nicholson', 'Strength': 3},
-     ...
-     {'Recommended': 'Emil Eifrem', 'Strength': 1},
-     {'Recommended': 'Stephen Rea', 'Strength': 1},
-     {'Recommended': 'John Hurt', 'Strength': 1},
-     {'Recommended': 'Christian Bale', 'Strength': 1},
-     {'Recommended': 'Robin Williams', 'Strength': 1},
-     {'Recommended': 'Demi Moore', 'Strength': 1},
-     {'Recommended': 'Aaron Sorkin', 'Strength': 1},
-     {'Recommended': 'Jonathan Lipnicki', 'Strength': 1},
-     {'Recommended': 'Jay Mohr', 'Strength': 1},
-     {'Recommended': 'Regina King', 'Strength': 1},
-     {'Recommended': 'Natalie Portman', 'Strength': 1}]
+.. code-block::
+
+    Out[]: [{'Recommended': 'Tom Cruise', 'Strength': 5},
+            {'Recommended': 'Cuba Gooding Jr.', 'Strength': 4},
+            {'Recommended': 'Keanu Reeves', 'Strength': 4},
+            {'Recommended': 'Carrie Fisher', 'Strength': 3},
+            {'Recommended': 'Carrie-Anne Moss', 'Strength': 3},
+            {'Recommended': 'Kelly McGillis', 'Strength': 3},
+            {'Recommended': 'Val Kilmer', 'Strength': 3},
+            {'Recommended': 'Laurence Fishburne', 'Strength': 3},
+            {'Recommended': 'Jack Nicholson', 'Strength': 3},
+            ...
+            {'Recommended': 'Emil Eifrem', 'Strength': 1},
+            {'Recommended': 'Christian Bale', 'Strength': 1},
+            {'Recommended': 'Robin Williams', 'Strength': 1},
+            {'Recommended': 'Demi Moore', 'Strength': 1},
+            {'Recommended': 'Aaron Sorkin', 'Strength': 1},
+            {'Recommended': 'Natalie Portman', 'Strength': 1}]
 
 
-| **Find someone to introduce Tom Hanks to Tom Cruise**
+Find someone to introduce Tom Hanks to Tom Cruise
+`````````````````````````````````````````````````
 
 ``cypher``:
 
@@ -810,34 +876,36 @@ For Tom Hanks, that means:
 
 .. code-block:: python
 
-    >>> results = graph.run('MATCH (tom:Person {name:"Tom Hanks"})-[:ACTED_IN]->(m)<-[:ACTED_IN]-(coActors), (coActors)-[:ACTED_IN]->(m2)<-[:ACTED_IN]-(cruise:Person {name:"Tom Cruise"}) RETURN tom, m, coActors, m2, cruise')
-    >>> results.data()
-    [{'tom': (_69:Person {born: 1956, name: 'Tom Hanks'}),
-    'm': (_154:Movie {released: 1995, tagline: 'Houston, we have a problem.', title: 'Apollo 13'}),
-    'coActors': (_17:Person {born: 1958, name: 'Kevin Bacon'}),
-    'm2': (_13:Movie {released: 1992, tagline: "In the heart of the nation's capital, in a courthouse of the U.S. government, one man will stop at nothing to keep his honor, and one will stop at nothing to find the truth.", title: 'A Few Good Men'}),
-    'cruise': (_14:Person {born: 1962, name: 'Tom Cruise'})},
-    {'tom': (_69:Person {born: 1956, name: 'Tom Hanks'}),
-    'm': (_140:Movie {released: 1999, tagline: "Walk a mile you'll never forget.", title: 'The Green Mile'}),
-    'coActors': (_40:Person {born: 1961, name: 'Bonnie Hunt'}),
-    'm2': (_35:Movie {released: 2000, tagline: 'The rest of his life begins now.', title: 'Jerry Maguire'}),
-    'cruise': (_14:Person {born: 1962, name: 'Tom Cruise'})},
-    {'tom': (_69:Person {born: 1956, name: 'Tom Hanks'}),
-    'm': (_76:Movie {released: 1990, tagline: 'A story of love, lava and burning desire.', title: 'Joe Versus the Volcano'}),
-    'coActors': (_32:Person {born: 1961, name: 'Meg Ryan'}),
-    'm2': (_27:Movie {released: 1986, tagline: 'I feel the need, the need for speed.', title: 'Top Gun'}),
-    'cruise': (_14:Person {born: 1962, name: 'Tom Cruise'})},
-    {'tom': (_69:Person {born: 1956, name: 'Tom Hanks'}),
-    'm': (_71:Movie {released: 1993, tagline: 'What if someone you never met, someone you never saw, someone you never knew was the only someone for you?', title: 'Sleepless in Seattle'}),
-    'coActors': (_32:Person {born: 1961, name: 'Meg Ryan'}),
-    'm2': (_27:Movie {released: 1986, tagline: 'I feel the need, the need for speed.', title: 'Top Gun'}),
-    'cruise': (_14:Person {born: 1962, name: 'Tom Cruise'})},
-    {'tom': (_69:Person {born: 1956, name: 'Tom Hanks'}),
-    'm': (_65:Movie {released: 1998, tagline: 'At odds in life... in love on-line.', title: "You've Got Mail"}),
-    'coActors': (_32:Person {born: 1961, name: 'Meg Ryan'}),
-    'm2': (_27:Movie {released: 1986, tagline: 'I feel the need, the need for speed.', title: 'Top Gun'}),
-    'cruise': (_14:Person {born: 1962, name: 'Tom Cruise'})}]
+   results = graph.run('MATCH (tom:Person {name:"Tom Hanks"})-[:ACTED_IN]->(m)<-[:ACTED_IN]-(coActors), (coActors)-[:ACTED_IN]->(m2)<-[:ACTED_IN]-(cruise:Person {name:"Tom Cruise"}) RETURN tom, m, coActors, m2, cruise')
+   results.data()
 
+.. code-block::
+
+    Out[]: [{'tom': Node('Person', born=1956, name='Tom Hanks'),
+             'm': Node('Movie', released=1990, tagline='A story of love, lava and burning desire.', title='Joe Versus the Volcano'),
+             'coActors': Node('Person', born=1961, name='Meg Ryan'),
+             'm2': Node('Movie', released=1986, tagline='I feel the need, the need for speed.', title='Top Gun'),
+             'cruise': Node('Person', born=1962, name='Tom Cruise')},
+            {'tom': Node('Person', born=1956, name='Tom Hanks'),
+             'm': Node('Movie', released=1999, tagline="Walk a mile you'll never forget.", title='The Green Mile'),
+             'coActors': Node('Person', born=1961, name='Bonnie Hunt'),
+             'm2': Node('Movie', released=2000, tagline='The rest of his life begins now.', title='Jerry Maguire'),
+             'cruise': Node('Person', born=1962, name='Tom Cruise')},
+            {'tom': Node('Person', born=1956, name='Tom Hanks'),
+             'm': Node('Movie', released=1998, tagline='At odds in life... in love on-line.', title="You've Got Mail"),
+             'coActors': Node('Person', born=1961, name='Meg Ryan'),
+             'm2': Node('Movie', released=1986, tagline='I feel the need, the need for speed.', title='Top Gun'),
+             'cruise': Node('Person', born=1962, name='Tom Cruise')},
+            {'tom': Node('Person', born=1956, name='Tom Hanks'),
+             'm': Node('Movie', released=1995, tagline='Houston, we have a problem.', title='Apollo 13'),
+             'coActors': Node('Person', born=1958, name='Kevin Bacon'),
+             'm2': Node('Movie', released=1992, tagline="In the heart of the nation's capital, in a courthouse of the U.S. government, one man will stop at nothing to keep his honor, and one will stop at nothing to find the truth.", title='A Few Good Men'),
+             'cruise': Node('Person', born=1962, name='Tom Cruise')},
+            {'tom': Node('Person', born=1956, name='Tom Hanks'),
+             'm': Node('Movie', released=1993, tagline='What if someone you never met, someone you never saw, someone you never knew was the only someone for you?', title='Sleepless in Seattle'),
+             'coActors': Node('Person', born=1961, name='Meg Ryan'),
+             'm2': Node('Movie', released=1986, tagline='I feel the need, the need for speed.', title='Top Gun'),
+             'cruise': Node('Person', born=1962, name='Tom Cruise')}]
 
 This allows you to use the full force of python on the results. That's pretty great.
 
@@ -856,7 +924,8 @@ Note:
 *WARNING: This will remove all Person and Movie nodes!*
 
 
-| **Delete all Movie and Person nodes, and their relationships**
+Delete all Movie and Person nodes, and their relationships
+``````````````````````````````````````````````````````````
 
 ``cypher``:
 
@@ -867,41 +936,55 @@ Note:
 
 ``python``:
 
- https://py2neo.org/v4/database.html#py2neo.database.Transaction.delete
+.. code-block:: python
+
+   graph = Graph(password='[yoursekretpasswordhere]')
+   len(graph.match())
+
+.. code-block::
+
+   Out[]: 253
 
 .. code-block:: python
 
-    >>> graph = Graph(password='[yoursekretpasswordhere]')
-    >>> len(graph.match())
-    253
-    >>> graph.delete_all()
+   graph.delete_all()
 
 
-| **Note you only need to compare property values like this when first creating relationships**
-| **Prove that the Movie Graph is gone**
+https://py2neo.org/v5/database.html#py2neo.database.Transaction.delete
+
+**Note you only need to compare property values like this when first creating relationships**
+**Prove that the Movie Graph is gone**
 
 ``cypher``:
 
 .. code-block:: cypher
 
-    MATCH (n) RETURN n
+   MATCH (n) RETURN n
 
 .. code-block:: python
 
-    >>> len(graph.match())
-    0
+   len(graph.match())
 
-    >>> list(graph.match())
-    []
+.. code-block::
+
+   Out[]: 0
+
+.. code-block:: python
+
+   list(graph.match())
+
+.. code-block::
+
+   Out[]: []
 
 ---
 
 This guide does not cover many interesting features of ``neo4j`` and ``py2neo`` such as the ability to ``update`` and ``merge``:
 
-https://py2neo.org/v4/data.html
+https://py2neo.org/v5/data.html
 
-https://py2neo.org/v4/database.html
+https://py2neo.org/v5/database.html
 
-Importantly the ``ogm`` (**"Object Graph Mapper"**, analogous to the ``orm`` "Object Relational Mapper" used by many frameworks for traditional relational databases) feature is not covered here: https://py2neo.org/v4/ogm.html
+Importantly the ``ogm`` (**"Object Graph Mapper"**, analogous to the ``orm`` "Object Relational Mapper" used by many frameworks for traditional relational databases) feature is not covered here: https://py2neo.org/v5/ogm.html
 
 ~Fin
