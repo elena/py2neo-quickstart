@@ -64,15 +64,17 @@ https://github.com/neo4j-examples/movies-python-bolt
 
 If you're cool with this, you're ready for this quickstart!
 
-**Prologue**
+**Where we're starting from ...**
 
 The built-in `Neo4j` tutorial "movie demo database" is one of the first things
-you see when you first open the `Neo4j` browser interface. The instructions to
-install this are here: https://neo4j.com/developer/guide-neo4j-browser/
+you see when you first open the `Neo4j` browser interface (the instructions to
+install this are here: `https://neo4j.com/developer/guide-neo4j-browser/`_).
 
 Once you install and start Neo4j the defaul neo4j-browser url is:
 http://localhost:7474/browser/. From here you can see the big friendly
 **"Jump into code: Write Code"** ``:play write-code``.
+
+The official description of this demo is:
 
   The Movie Graph is a mini graph application containing actors and directors that are related through the movies they've collaborated on.
 
@@ -162,7 +164,7 @@ Step 0: Connect to Graph using Py2Neo
 There are plenty of options for connecting to your database if this implementation
 doesn't work for you.
 
-For example, the following are all functionally **equivalent**:
+For example, the following are all **equivalent**:
 
 .. code-block:: python
 
@@ -175,9 +177,9 @@ For example, the following are all functionally **equivalent**:
 
 See the reference here: https://py2neo.org/v5/database.html#py2neo.database.Graph
 
-Note that as of Neo4j version 4: if you have **multiple graphs databases**, you
+Note that as of Neo4j 4.0+: if you have **multiple graphs databases**, you
 can choose which database you connect to using the ``name`` argument, see the docs above.
-Multi-database support is in active development at the Neo4j level in versions 4 add 5.
+Multi-database support is still in active development at the database level:
 https://neo4j.com/developer/manage-multiple-databases/
 
 A full list of database ``names`` can be shown through the Cypher:
@@ -309,7 +311,7 @@ Quick demo:
 
 .. code-block:: python
 
-    keanu = graph nodes.match("Person", name="Keanu Reeves").first()
+    keanu = graph.nodes.match("Person", name="Keanu Reeves").first()
 
     Out[]: Node('Person', born=1964, name='Keanu Reeves')
 
